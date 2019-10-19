@@ -1,0 +1,46 @@
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    transition: background-color 0.3s;
+}
+
+.green-button {
+    color: #fff;
+    background-color: #56C376;
+    border-radius: 24px;
+    font-weight: 700;
+    padding: 0 20px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.green-button:hover {
+    background-color: #56A376;
+}
+
+.van-button {
+    border-radius: 8px;
+    color: #000;
+    background-color: #f0f0f0;
+    border: 1px solid #dddddd;
+    font-weight: bold;
+    padding: 0 20px;
+    height: 48px;
+}
+
+.close-button {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    background-color: #EDEDED;
+}
+
+.close-button:hover {
+    background-color: #CDCDCD;
+}

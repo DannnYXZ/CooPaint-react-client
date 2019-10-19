@@ -1,0 +1,10 @@
+.modal-widget {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 24px;
+    max-width: 660px;
+    position: relative;
+    z-index: 1000;
+    padding: 20px;
+}
