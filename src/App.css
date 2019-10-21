@@ -28,6 +28,7 @@ p {
 
 .auth-toolbar {
     position: absolute;
+    display: flex;
     z-index: 100;
     top: 12px;
     right: 12px;

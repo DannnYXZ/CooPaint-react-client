@@ -3,10 +3,13 @@ import Button from "./Button";
 
 class AccountButton extends React.Component {
   render() {
+    //className="account-button"
     return (
-        <div className="account-button">
-          <Button href="#" className="button van-button" onClick={this.props.onClick}>Sign Up or Log In</Button>
-        </div>
+        <Button>
+          <img src={this.props.img || "avatar.svg"}/>
+          <span style={{margin: "0 8px"}}>Mr X</span>
+          <img src="dropdown.svg"/>
+        </Button>
     );
   }
 }

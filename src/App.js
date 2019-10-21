@@ -5,6 +5,8 @@ import Board from "./component/Board";
 import WidgetsWrapper from "./component/WidgetsWrapper";
 import LogInWidget from "./component/LogInWidget";
 import AccountButton from "./component/AccountButton";
+import SignUpWidget from "./component/SignUpWidget";
+import Button from "./component/Button";
 
 function L(text) {
   console.log(text);
@@ -14,11 +16,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isJoinBoardWidgetOpened: true,
+      isJoinBoardWidgetOpened: false,
       isLogInWidgetOpened: false,
-      isRegisterWidgetOpened: false
+      isSignUpWidgetOpened: true,
+      isAuthorized: false
     };
-    this.apiURL = "http://localhost:8089/coopaint_war_exploded/put-text";
   }
 
   handleJoinButtonClick(boardName) {
@@ -40,12 +42,17 @@ class App extends React.Component {
     this.setState({isJoinBoardWidgetOpened: false});
   }
 
-  openLogInWidget() {
-    this.setState({isLogInWidgetOpened: true});
+  isWrapperOpened() {
+    return this.state.isJoinBoardWidgetOpened || this.state.isLogInWidgetOpened || this.state.isSignUpWidgetOpened;
   }
 
-  isWrapperOpened() {
-    return this.state.isJoinBoardWidgetOpened || this.state.isLogInWidgetOpened;
+  renderAccount() {
+    //localStorage.
+    return this.state.isAuthorized
+        ? <AccountButton onClick={() => this.setState({isLogInWidgetOpened: true})}/>
+        : <Button href="#" className="button van-button" onClick={() => this.setState({isLogInWidgetOpened: true})}>
+          Log In or Sign Up
+        </Button>;
   }
 
   render() {
@@ -56,12 +63,17 @@ class App extends React.Component {
                              isOpened={this.state.isJoinBoardWidgetOpened}/>
             <LogInWidget isOpened={this.state.isLogInWidgetOpened}
                          onClose={() => this.setState({isLogInWidgetOpened: false})}
-                         onRegisterClick={() => {
-                           this.setState({isLogInWidgetOpened: false, isRegisterWidgetOpened: true})
+                         onSignUpClick={() => {
+                           this.setState({isLogInWidgetOpened: false, isSignUpWidgetOpened: true})
                          }}/>
+            <SignUpWidget isOpened={this.state.isSignUpWidgetOpened}
+                          onClose={() => this.setState({isSignUpWidgetOpened: false})}
+                          onLogInClick={() => {
+                            this.setState({isLogInWidgetOpened: true, isSignUpWidgetOpened: false})
+                          }}/>
           </WidgetsWrapper>
           <div className="auth-toolbar">
-            <AccountButton onClick={this.openLogInWidget.bind(this)}/>
+            {this.renderAccount()}
           </div>
           <Board/>
         </div>

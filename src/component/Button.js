@@ -5,7 +5,7 @@ class Button extends React.Component {
   render() {
     return (
         <a href={this.props.href || "#"} className={"link-btn"}>
-          <div className={this.props.className || "van-button"}
+          <div className={this.props.className || "button van-button"}
                onClick={() => this.props.onClick()}
           >
             {this.props.img && <img className="button-img" src={this.props.img}/>}

@@ -1,10 +1,11 @@
 import React from "react";
-import './Main.css'
+import "./Main.css"
+import {post} from "../model/Model";
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 
-class LogInWidget extends React.Component {
+class SignUpWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,10 +14,19 @@ class LogInWidget extends React.Component {
     }
   }
 
+  handleOnSignUpClick() {
+    let user = {
+      username: this.state.email,
+      email: this.state.email,
+      password: this.state.passw
+    };
+    post("/api/sign-up", user);
+  }
+
   render() {
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
-          <h1>Log In</h1>
+          <h1>Sign Up</h1>
           <div>
             <TextInput type="email"
                        placeholder="Your email"
@@ -26,15 +36,12 @@ class LogInWidget extends React.Component {
                        placeholder="Enter password"
                        onChangeText={(text) => this.setState({passw: text})}
                        className="van-input mb1"/>
-            <div className="hr-section">
-              <a href="/restore-password">
-                <b>Forgot your password?</b>
-              </a>
-              <Button className="button green-button">LOG IN</Button>
+            <div className="hr-section fdrr">
+              <Button className="button green-button" onClick={this.handleOnSignUpClick.bind(this)}>SIGN UP</Button>
             </div>
             <hr/>
-            <p className="paragraph h4">Don’t have an account?&nbsp;
-              <a href="#" className="ctrl-signup" onClick={this.props.onSignUpClick}><b>Create one here!</b></a>
+            <p className="paragraph h4">Got an account?&nbsp;
+              <a href="#" className="ctrl-signup" onClick={this.props.onLogInClick}><b>Log in here!</b></a>
             </p>
           </div>
         </ModalWidget>
@@ -42,4 +49,4 @@ class LogInWidget extends React.Component {
   }
 }
 
-export default LogInWidget;
+export default SignUpWidget;
