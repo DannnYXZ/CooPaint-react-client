@@ -3,14 +3,22 @@ import './Main.css'
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
+import {post} from "../model/Model";
 
-class LogInWidget extends React.Component {
+class SignInWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
-      passw: ''
+      password: ''
     }
+  }
+
+  handleOnSignInClick() {
+    post("/api/sign-in", {
+      email: this.state.email,
+      password: this.state.password
+    }, this.props.onSignedIn);
   }
 
   render() {
@@ -24,13 +32,13 @@ class LogInWidget extends React.Component {
                        className="van-input mb1"/>
             <TextInput type="password"
                        placeholder="Enter password"
-                       onChangeText={(text) => this.setState({passw: text})}
+                       onChangeText={(text) => this.setState({password: text})}
                        className="van-input mb1"/>
             <div className="hr-section">
               <a href="/restore-password">
                 <b>Forgot your password?</b>
               </a>
-              <Button className="button green-button">LOG IN</Button>
+              <Button className="button green-button" onClick={this.handleOnSignInClick.bind(this)}>LOG IN</Button>
             </div>
             <hr/>
             <p className="paragraph h4">Don’t have an account?&nbsp;
@@ -42,4 +50,4 @@ class LogInWidget extends React.Component {
   }
 }
 
-export default LogInWidget;
+export default SignInWidget;

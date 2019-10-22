@@ -1,15 +1,11 @@
 export function post(url, object, ok_callback, fail_callback) {
   fetch(url, {
         method: 'POST',
-        //mode: 'no-cors',
         credentials: 'include',
         body: JSON.stringify(object),
         mimeType: 'application/json',
-        //contentType: 'application/json',
-        //responseType: 'application/json',
         headers: {
           'Accept': 'application/json; charset=UTF-8',
-          'Access-Control-Allow-Headers': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8'
         }
       }

@@ -14,13 +14,17 @@ class SignUpWidget extends React.Component {
     }
   }
 
+  onKO() {
+    console.log('KO');
+  }
+
   handleOnSignUpClick() {
     let user = {
-      username: this.state.email,
+      name: this.state.email,
       email: this.state.email,
       password: this.state.passw
     };
-    post("/api/sign-up", user);
+    post("/api/sign-up", user, this.props.onSignedUp, this.onKO);
   }
 
   render() {
