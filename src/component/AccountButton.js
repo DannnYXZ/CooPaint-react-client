@@ -5,7 +5,9 @@ import Drop from "./Drop";
 class AccountButton extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isDropped: false};
+    this.state = {
+      isDropped: false
+    };
   }
 
   render() {
@@ -14,12 +16,9 @@ class AccountButton extends React.Component {
           <img src={this.props.img || "avatar.svg"}/>
           <span style={{margin: "0 8px"}}>{this.props.username}</span>
           <img src="dropdown.svg"/>
-          <Drop isOpened={this.state.isDropped} style={{top: 20}}>
-            // TODO: use forms for saving password
-            // TODO: drop element
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
+          <Drop isOpened={this.state.isDropped} style={{top: 50}}>
+            <span>// TODO: use forms for saving password</span>
+            <Button onClick={this.props.onSignOut}>Sign Out</Button>
           </Drop>
         </Button>
     );

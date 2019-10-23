@@ -4,42 +4,50 @@ import {post} from "../model/Model";
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
+import Error from "./Error";
 
 class SignUpWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
-      passw: ''
-    }
+      passw: '',
+      error: ''
+    };
+    this.refEmail = React.createRef();
+    this.refPassword = React.createRef();
   }
 
-  onKO() {
-    console.log('KO');
+  onSignedUp(user) {
+    this.props.onSignedUp(user);
+    this.refEmail.current.value = '';
+    this.refPassword.current.value = '';
+    this.setState({error: ''});
   }
 
   handleOnSignUpClick() {
     let user = {
-      name: this.state.email,
-      email: this.state.email,
-      password: this.state.passw
+      name: this.refEmail.current.value,
+      email: this.refEmail.current.value,
+      password: this.refPassword.current.value
     };
-    post("/api/sign-up", user, this.props.onSignedUp, this.onKO);
+    post("/api/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.message}));
   }
 
   render() {
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
           <h1>Sign Up</h1>
-          <div>
+          <form>
+            <Error>{this.state.error}</Error>
             <TextInput type="email"
                        placeholder="Your email"
-                       onChangeText={(text) => this.setState({email: text})}
-                       className="van-input mb1"/>
+                       className="van-input mb1"
+                       rref={this.refEmail}/>
             <TextInput type="password"
                        placeholder="Enter password"
-                       onChangeText={(text) => this.setState({passw: text})}
-                       className="van-input mb1"/>
+                       className="van-input mb1"
+                       rref={this.refPassword}/>
             <div className="hr-section fdrr">
               <Button className="button green-button" onClick={this.handleOnSignUpClick.bind(this)}>SIGN UP</Button>
             </div>
@@ -47,7 +55,7 @@ class SignUpWidget extends React.Component {
             <p className="paragraph h4">Got an account?&nbsp;
               <a href="#" className="ctrl-signup" onClick={this.props.onLogInClick}><b>Log in here!</b></a>
             </p>
-          </div>
+          </form>
         </ModalWidget>
     );
   }

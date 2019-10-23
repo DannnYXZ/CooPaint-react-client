@@ -10,17 +10,14 @@ export function post(url, object, ok_callback, fail_callback) {
         }
       }
   ).then(response => {
-    if (response.status === 200) {
-      console.log("status 200:");
-      console.log(response);
-      return response.json();
-    } else {
-      console.log("fail");
-      if (fail_callback) fail_callback();
-    }
-  }).then(json => {
-        console.log(json);
+    response.text().then(text => {
+      let json = text ? JSON.parse(text) : {};
+      if (response.ok) {
+        console.log("this in post", this);
         if (ok_callback) ok_callback(json);
+      } else {
+        if (fail_callback) fail_callback(json);
       }
-  );
+    });
+  });
 }

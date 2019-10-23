@@ -6,7 +6,9 @@ class Button extends React.Component {
     return (
         <a href={this.props.href || "#"} className={"link-btn"}>
           <div className={this.props.className || "button van-button"}
-               onClick={() => this.props.onClick()}
+               onClick={() => {
+                 if (this.props.onClick) this.props.onClick()
+               }}
           >
             {this.props.img && <img className="button-img" src={this.props.img}/>}
             {this.props.children}

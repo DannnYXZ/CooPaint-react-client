@@ -4,21 +4,30 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import {post} from "../model/Model";
+import Error from "./Error";
 
 class SignInWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: ''
-    }
+      error: ''
+    };
+    this.refEmail = React.createRef();
+    this.refPassword = React.createRef();
+  }
+
+  onSignedIn(user) {
+    this.props.onSignedIn(user);
+    this.refEmail.current.value = '';
+    this.refPassword.current.value = '';
+    this.setState({error: ''});
   }
 
   handleOnSignInClick() {
     post("/api/sign-in", {
-      email: this.state.email,
-      password: this.state.password
-    }, this.props.onSignedIn);
+      email: this.refEmail.current.value,
+      password: this.refPassword.current.value
+    }, this.onSignedIn.bind(this), (error) => this.setState({error: error.message}));
   }
 
   render() {
@@ -26,14 +35,15 @@ class SignInWidget extends React.Component {
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
           <h1>Log In</h1>
           <div>
+            <Error>{this.state.error}</Error>
             <TextInput type="email"
                        placeholder="Your email"
-                       onChangeText={(text) => this.setState({email: text})}
-                       className="van-input mb1"/>
+                       className="van-input mb1"
+                       rref={this.refEmail}/>
             <TextInput type="password"
                        placeholder="Enter password"
-                       onChangeText={(text) => this.setState({password: text})}
-                       className="van-input mb1"/>
+                       className="van-input mb1"
+                       rref={this.refPassword}/>
             <div className="hr-section">
               <a href="/restore-password">
                 <b>Forgot your password?</b>

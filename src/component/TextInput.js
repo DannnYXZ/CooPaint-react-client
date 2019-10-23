@@ -8,10 +8,11 @@ class TextInput extends React.Component {
 
   render() {
     return (
-        <input type={this.props.type || "text"}
+        <input ref={this.props.rref}
+               type={this.props.type || "text"}
+               autoComplete="on"
                placeholder={this.props.placeholder}
                className={this.props.className || "van-input"}
-               onChange={(e) => this.props.onChangeText(e.target.value)}
                onKeyUp={this.handleKeyUp.bind(this)}/>
     );
   }

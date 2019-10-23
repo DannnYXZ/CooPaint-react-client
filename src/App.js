@@ -30,6 +30,12 @@ class App extends React.Component {
     post("/api/auth", {}, this.acceptUserData.bind(this));
   }
 
+  signOut() {
+    post("/api/sign-out", {}, () => {
+      this.setState({isAuthorized: false})
+    });
+  }
+
   acceptUserData(user) {
     this.setState({
       isAuthorized: true,
@@ -52,7 +58,7 @@ class App extends React.Component {
   renderAccount() {
     //localStorage.
     return this.state.isAuthorized
-        ? <AccountButton username={this.state.name} onClick={() => this.setState({isLogInWidgetOpened: true})}/>
+        ? <AccountButton username={this.state.name} onSignOut={() => this.signOut()}/>
         : <Button href="#" className="button van-button" onClick={() => this.setState({isLogInWidgetOpened: true})}>
           Log In or Sign Up
         </Button>;
