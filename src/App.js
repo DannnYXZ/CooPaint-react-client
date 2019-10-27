@@ -11,7 +11,7 @@ import {post, post_async} from "./model/Model";
 import {loadLocale} from "./model/Locale";
 import Drop from "./component/Drop";
 import TextInput from "./component/TextInput";
-import ManageParticipantsWidget from "./component/ManageParticipantsWidget";
+import ParticipantsManagerWidget from "./component/ParticipantsManagerWidget";
 import BoardBrowserWidget from "./component/BoardBrowserWidget";
 
 function L(text) {
@@ -28,7 +28,8 @@ class App extends React.Component {
       isAuthorized: false,
       isAccountButtonOpened: false,
       isMainMenuOpened: false,
-      isBoardBrowserOpened: true,
+      isBoardBrowserOpened: false,
+      isParticipantsManagerOpened: true,
       name: '',
       avatar: '',
       boardName: 'Unnamed Board'
@@ -63,7 +64,8 @@ class App extends React.Component {
     return this.state.isJoinBoardWidgetOpened
         || this.state.isLogInWidgetOpened
         || this.state.isSignUpWidgetOpened
-        || this.state.isBoardBrowserOpened;
+        || this.state.isBoardBrowserOpened
+        || this.state.isParticipantsManagerOpened;
   }
 
   renderAccount() {
@@ -98,6 +100,7 @@ class App extends React.Component {
 
   onManage() {
 
+    this.setState({isParticipantsManagerOpened: true});
   }
 
   renderManager() {
@@ -107,11 +110,11 @@ class App extends React.Component {
             <TextInput rref={this.refBoardInput} placeholder={this.state.boardName} className="trans-input"/>
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 1}}>
-              <Button className="btn trans-btn" onClick={this.onSave}>Save board</Button>
-              <Button className="btn trans-btn" onClick={this.onDelete}>Delete</Button>
+              <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>Save board</Button>
+              <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>Delete</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>Open saved board</Button>
-              <Button className="btn trans-btn" onClick={this.onCreate}>Create new board</Button>
-              <Button className="btn trans-btn" onClick={this.onManage}>Manage participants</Button>
+              <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>Create new board</Button>
+              <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>Manage participants</Button>
             </Drop>
           </Button>
           <Button className="btn green-btn">Invite</Button>
@@ -137,7 +140,8 @@ class App extends React.Component {
                             this.setState({isLogInWidgetOpened: true, isSignUpWidgetOpened: false})
                           }}
                           onSignedUp={(user) => this.acceptUserData(user)}/>
-            <ManageParticipantsWidget/>
+            <ParticipantsManagerWidget isOpened={this.state.isParticipantsManagerOpened}
+                                       onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
             <BoardBrowserWidget isOpened={this.state.isBoardBrowserOpened}
                                 onClose={() => this.setState({isBoardBrowserOpened: false})}/>
           </WidgetsWrapper>

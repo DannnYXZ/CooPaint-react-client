@@ -13,7 +13,7 @@ class BoardBrowserWidget extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeTab: 0,
+      activeTab: 1,
       error: ''
     };
     this.refEmail = React.createRef();
@@ -28,11 +28,11 @@ class BoardBrowserWidget extends React.Component {
   }
 
   onMyBoards() {
-    this.setState({activeTab: 0});
+    this.setState({activeTab: 1});
   }
 
   onShared() {
-    this.setState({activeTab: 1});
+    this.setState({activeTab: 2});
   }
 
   handleOnSubmit(e) {
@@ -45,10 +45,10 @@ class BoardBrowserWidget extends React.Component {
 
   renderContent() {
     let resp;
-    if (this.state.activeTab === 0) {
+    if (this.state.activeTab === 1) {
       //await post_async("/api/my-boards", {}, (json) => resp = json);
     }
-    if (this.state.activeTab === 1) {
+    if (this.state.activeTab === 2) {
       //await post_async("/api/shared-boards", {}, (json) => resp = json);
     }
     //return resp.boards.map(b => <BoardCover id={b.id} name={b.name} img={b.img}/>);
@@ -76,6 +76,7 @@ class BoardBrowserWidget extends React.Component {
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose} style={{maxHeight: "98%"}}>
           <div className="browser-tabs">
             <Tabs activeTab={this.state.activeTab}>
+              <span></span>
               <Button className="btn" onClick={this.onMyBoards.bind(this)}>My boards</Button>
               <Button className="btn" onClick={this.onShared.bind(this)}>Shared with me</Button>
             </Tabs>

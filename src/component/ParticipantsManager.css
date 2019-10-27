@@ -1,0 +1,19 @@
+.participants {
+    display: flex;
+    flex-direction: column;
+}
+
+.participant-info {
+    display: flex;
+    align-items: center;
+}
+
+.participant-info > * {
+    margin-right: 10px;
+}
+
+.participant {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
