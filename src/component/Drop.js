@@ -5,8 +5,11 @@ class Drop extends React.Component {
   render() {
     //className="account-button"
     return (
-        <ul className="drop" style={{display: this.props.isOpened ? "" : "none", ...this.props.style}}>
-          {this.props.children.map(e => <li>{e}</li>)}
+        <ul className={this.props.className || "drop"}
+            style={{display: this.props.isOpened ? "" : "none", ...this.props.style}}>
+          {Array.isArray(this.props.children)
+              ? this.props.children.map(e => <li>{e}</li>)
+              : <li>{this.props.children}</li>}
         </ul>
     );
   }

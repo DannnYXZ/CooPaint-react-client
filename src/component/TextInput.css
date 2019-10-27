@@ -15,3 +15,8 @@
 .van-input:hover {
     border-color: #56C376;
 }
+
+.trans-input {
+    background: transparent;
+    border: 1px solid transparent;
+}

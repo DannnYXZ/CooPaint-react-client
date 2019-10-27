@@ -27,7 +27,7 @@ class JoinBoardWidget extends React.Component {
                        onEnter={this.handleJoinBoardClick.bind(this)}
                        className="van-input mr1"/>
             <Button onClick={this.handleJoinBoardClick.bind(this)}
-                    className="button green-button">
+                    className="btn green-btn">
               SUBMIT
             </Button>
           </div>

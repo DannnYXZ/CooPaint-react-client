@@ -1,16 +1,17 @@
-.button {
+.btn {
     display: flex;
+    font-weight: bold;
     justify-content: center;
     align-items: center;
     text-decoration: none;
     transition: background-color 0.3s;
 }
 
-.button:hover {
+.btn:hover {
     transition: background-color 0.3s;
 }
 
-.green-button {
+.green-btn {
     color: #fff;
     background-color: #56C376;
     border-radius: 24px;
@@ -20,11 +21,31 @@
     line-height: 40px;
 }
 
-.green-button:hover {
+.trans-btn {
+    background: transparent;
+    border: transparent;
+    height: 40px;
+    padding: 0 20px;
+    color: #333333;
+}
+
+.trans-btn:hover {
+    background: #CDCDCD;
+}
+
+.green-btn:hover {
     background-color: #56A376;
 }
 
-.van-button {
+.rnd-btn {
+    position: relative;
+    border-radius: 50%;
+    height: 48px;
+    width: 48px;
+    background-color: #f0f0f0;
+}
+
+.van-btn {
     border-radius: 8px;
     color: #000;
     background-color: #f0f0f0;
@@ -34,13 +55,19 @@
     height: 48px;
 }
 
-.close-button {
+.close-btn {
     border-radius: 50%;
     width: 30px;
     height: 30px;
     background-color: #EDEDED;
 }
 
-.close-button:hover {
+.close-btn:hover {
     background-color: #CDCDCD;
+}
+
+.btn-img {
+    position: relative;
+    height: 100%;
+    width: auto;
 }

@@ -1,0 +1,25 @@
+.board-browser {
+    margin: 20px 10px;
+    min-width: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.content-scroller {
+    margin-bottom: 25px;
+}
+
+.board-browser-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.board-browser-content > *:not(:last-child) {
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.browser-tabs {
+    padding: 20px;
+}

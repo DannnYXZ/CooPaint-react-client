@@ -1,0 +1,22 @@
+.tabs {
+    display: flex;
+    color: #56A376;
+}
+
+.tab-item {
+    position: relative;
+}
+
+.tab-item:not(:last-child) {
+    margin-right: 20px;
+}
+
+.tab-active:after {
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    content: "";
+    width: 100%;
+    height: 2px;
+    background-color: #56C376;
+}

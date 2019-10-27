@@ -21,3 +21,25 @@ export function post(url, object, ok_callback, fail_callback) {
     });
   });
 }
+
+export async function post_async(url, object, ok_callback, fail_callback) {
+  const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(object),
+        mimeType: 'application/json',
+        headers: {
+          'Accept': 'application/json; charset=UTF-8',
+          'Content-Type': 'application/json; charset=UTF-8'
+        }
+      }
+  );
+  const text = await response.text();
+  let json = text ? JSON.parse(text) : {};
+  if (response.ok) {
+    console.log("this in post", this);
+    if (ok_callback) ok_callback(json);
+  } else {
+    if (fail_callback) fail_callback(json);
+  }
+}

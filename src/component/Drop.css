@@ -1,5 +1,18 @@
 .drop {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    z-index: 500;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+}
+
+.drop li:not(:last-child) {
+    border-bottom: 2px solid #e6e6e6;
+}
+
+.drop-hr {
+    display: flex;
     position: absolute;
     z-index: 500;
     border-radius: 8px;
@@ -9,6 +22,6 @@
     background-color: #f0f0f0;
 }
 
-.drop li:not(:last-child) {
-    border-bottom: 2px solid #e6e6e6;
+.drop-hr li:not(:last-child) {
+    border-right: 2px solid #e6e6e6;
 }

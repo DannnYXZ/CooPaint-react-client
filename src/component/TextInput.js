@@ -13,7 +13,8 @@ class TextInput extends React.Component {
                autoComplete="on"
                placeholder={this.props.placeholder}
                className={this.props.className || "van-input"}
-               onKeyUp={this.handleKeyUp.bind(this)}/>
+               onKeyUp={this.handleKeyUp.bind(this)}
+               onClick={(e) => e.stopPropagation()}/>
     );
   }
 }

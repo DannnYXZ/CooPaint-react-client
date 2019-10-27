@@ -1,0 +1,17 @@
+.board-img {
+    width: 230px;
+    height: 174px;
+    border-radius: 24px;
+    border: solid 1px #CDCDCD;
+}
+
+.board-img:hover {
+    border: solid 2px #56C376;
+}
+
+.board-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+}

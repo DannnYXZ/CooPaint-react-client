@@ -10,9 +10,9 @@ class ModalWidget extends React.Component {
 
   render() {
     return (
-        <div className="modal-widget" style={{display: this.displayStyle()}}>
+        <div className="modal-widget" style={{display: this.displayStyle(), ...this.props.style}}>
           {this.props.onClose
-              ? <Button className="button close-button tr"
+              ? <Button className="btn close-btn tr"
                         img="close.svg"
                         onClick={this.props.onClose}/>
               : null}
