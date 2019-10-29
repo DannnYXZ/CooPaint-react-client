@@ -56,3 +56,11 @@ ul {
     bottom: 12px;
     left: 12px;
 }
+
+.chat-box {
+    position: absolute;
+    display: flex;
+    z-index: 100;
+    bottom: 12px;
+    right: 12px;
+}

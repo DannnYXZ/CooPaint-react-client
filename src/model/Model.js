@@ -11,6 +11,7 @@ export function post(url, object, ok_callback, fail_callback) {
       }
   ).then(response => {
     response.text().then(text => {
+      console.log(text);
       let json = text ? JSON.parse(text) : {};
       if (response.ok) {
         console.log("this in post", this);
@@ -37,7 +38,7 @@ export async function post_async(url, object, ok_callback, fail_callback) {
   const text = await response.text();
   let json = text ? JSON.parse(text) : {};
   if (response.ok) {
-    console.log("this in post", this);
+    // console.log("this in post", this);
     if (ok_callback) ok_callback(json);
   } else {
     if (fail_callback) fail_callback(json);

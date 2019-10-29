@@ -13,6 +13,7 @@ import Drop from "./component/Drop";
 import TextInput from "./component/TextInput";
 import ParticipantsManagerWidget from "./component/ParticipantsManagerWidget";
 import BoardBrowserWidget from "./component/BoardBrowserWidget";
+import Chat from "./component/Chat";
 
 function L(text) {
   console.log(text);
@@ -29,7 +30,7 @@ class App extends React.Component {
       isAccountButtonOpened: false,
       isMainMenuOpened: false,
       isBoardBrowserOpened: false,
-      isParticipantsManagerOpened: true,
+      isParticipantsManagerOpened: false,
       name: '',
       avatar: '',
       boardName: 'Unnamed Board'
@@ -95,7 +96,7 @@ class App extends React.Component {
   }
 
   onCreate() {
-
+    post("/api/save-board", {})
   }
 
   onManage() {
@@ -158,6 +159,9 @@ class App extends React.Component {
                 <Button className="btn trans-btn">DE</Button>
               </Drop>
             </Button>
+          </div>
+          <div className="chat-box">
+            <Chat/>
           </div>
           <Board/>
         </div>
