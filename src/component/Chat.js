@@ -36,7 +36,8 @@ class Chat extends React.Component {
       ]
     };
     this.inputRef = React.createRef();
-    this.socket = new WebSocket("ws://0.0.0.0:8089/api/chat");
+    //this.socket = new WebSocket("ws://127.0.0.1:8089/api/chat");
+    this.socket = new WebSocket(`ws://${window.location.host}/api/chat`);
     this.socket.onmessage = this.onMessage.bind(this);
   }
 
