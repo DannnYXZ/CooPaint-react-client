@@ -13,7 +13,7 @@ class Chat extends React.Component {
           from: "A",
           time: "12:46",
           img: "https://image.flaticon.com/icons/svg/145/145867.svg",
-          body: "Hi, welcome to XXX! Go ahead and send me a message."
+          body: "Hi, welcome to XXX! Blah blah... blah... yep."
         },
         {
           from: "B",
@@ -36,12 +36,20 @@ class Chat extends React.Component {
       ]
     };
     this.inputRef = React.createRef();
-    this.socket = new WebSocket("ws://127.0.0.1:8089/api/chat");
+    this.socket = new WebSocket("ws://0.0.0.0:8089/api/chat");
     this.socket.onmessage = this.onMessage.bind(this);
   }
 
   onMessage(event) {
     let json = JSON.parse(event.data);
+    switch (json.action) {
+      case "put-msg":
+        this.setState({messages: this.state.messages.concat([json.message])});
+        break;
+      case "remove-msg":
+
+        break;
+    }
     console.log(event.data);
   }
 
@@ -49,12 +57,16 @@ class Chat extends React.Component {
     console.log("KEKE");
     this.socket.send(JSON.stringify(
         {
-          from: this.state.me,
-          to: "B",
-          time: "12:34",
-          body: this.inputRef.current.value
+          action: "put-msg",
+          message: {
+            from: this.state.me,
+            to: "B",
+            time: "12:34",
+            body: this.inputRef.current.value
+          }
         }
     ));
+    this.inputRef.current.value = '';
   }
 
   renderMessage(msg) {
@@ -74,9 +86,21 @@ class Chat extends React.Component {
     );
   }
 
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({behavior: "smooth"});
+  };
+
+  componentDidMount() {
+    this.scrollToBottom();
+  }
+
+  componentDidUpdate() {
+    this.scrollToBottom();
+  }
+
   render() {
     return (
-        <section className="msger">
+        <div className="msger" onClick={e => e.stopPropagation()}>
           <header className="msger-header">
             <div className="msger-header-title">
             </div>
@@ -85,13 +109,17 @@ class Chat extends React.Component {
           </header>
           <main className="msger-chat">
             {this.state.messages.map(msg => this.renderMessage(msg))}
+            <div style={{float: "left", clear: "both"}} ref={(el) => {
+              this.messagesEnd = el;
+            }}/>
           </main>
           <div className="msger-inputarea">
-            <TextInput rref={this.inputRef} type="text" className="msger-input" placeholder="Enter your message..."/>
+            <TextInput rref={this.inputRef} className="msger-input" placeholder="Enter your message..."
+                       onEnter={this.send.bind(this)}/>
             <Button className="msger-send-btn" style={{display: "inline-block"}}
                     onClick={this.send.bind(this)}>Send</Button>
           </div>
-        </section>
+        </div>
     );
   }
 }

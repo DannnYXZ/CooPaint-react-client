@@ -1,5 +1,6 @@
 .btn {
     display: flex;
+    cursor: pointer;
     font-weight: bold;
     justify-content: center;
     align-items: center;
@@ -70,4 +71,9 @@
     position: relative;
     height: 100%;
     width: auto;
+}
+
+.link-btn {
+    display: block;
+    cursor: pointer;
 }

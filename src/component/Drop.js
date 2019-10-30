@@ -3,7 +3,6 @@ import "./Drop.css"
 
 class Drop extends React.Component {
   render() {
-    //className="account-button"
     return (
         <ul className={this.props.className || "drop"}
             style={{display: this.props.isOpened ? "" : "none", ...this.props.style}}>

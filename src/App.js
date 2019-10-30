@@ -31,6 +31,7 @@ class App extends React.Component {
       isMainMenuOpened: false,
       isBoardBrowserOpened: false,
       isParticipantsManagerOpened: false,
+      isChatOpened: false,
       name: '',
       avatar: '',
       boardName: 'Unnamed Board'
@@ -151,8 +152,8 @@ class App extends React.Component {
           </div>
           {this.renderManager()}
           <div className="toolbar-bl">
-            <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}>
-              <img className="btn-img" src="globe.svg"/>
+            <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}
+                    img="globe.svg">
               <Drop style={{top: 3, left: 50}} className="drop-hr" isOpened={this.state.isDropped}>
                 <Button className="btn trans-btn">EN</Button>
                 <Button className="btn trans-btn">RU</Button>
@@ -161,7 +162,12 @@ class App extends React.Component {
             </Button>
           </div>
           <div className="chat-box">
-            <Chat/>
+            <Button className="btn rnd-btn" onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
+              <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
+              <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
+                <Chat/>
+              </Drop>
+            </Button>
           </div>
           <Board/>
         </div>

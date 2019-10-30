@@ -6,23 +6,13 @@
     --right-msg-bg: #579ffb;
 }
 
-*,
-*:before,
-*:after {
-    box-sizing: inherit;
-    margin: 0;
-    padding: 0;
-}
-
 .msger {
     display: flex;
-    flex-flow: column wrap;
+    flex-flow: column;
     justify-content: space-between;
     width: 100%;
-    max-width: 867px;
-    max-height: 867px;
-    margin: 25px 10px;
-    height: calc(100% - 50px);
+    max-width: 367px;
+    max-height: 467px;
     border: var(--border);
     border-radius: 5px;
     background: var(--msger-bg);
@@ -39,9 +29,12 @@
 }
 
 .msger-chat {
+    display: flex;
+    flex-direction: column;
     flex: 1;
     overflow-y: auto;
     padding: 10px;
+    scroll-margin-top: 10;
 }
 
 .msger-chat::-webkit-scrollbar {
@@ -76,9 +69,10 @@
 }
 
 .msg-bubble {
-    max-width: 450px;
+    flex: 1;
     padding: 15px;
     border-radius: 15px;
+    word-break: break-word;
     background: var(--left-msg-bg);
 }
 
