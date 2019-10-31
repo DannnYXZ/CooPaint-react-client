@@ -7,8 +7,10 @@ import {post} from "../model/Model";
 import Error from "./Error";
 import ToggleButton from "./ToggleButton";
 import Logo from "./Logo";
+import MyContext from "../model/Context";
 
 class ParticipantsManagerWidget extends React.Component {
+  static contextType = MyContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -45,9 +47,10 @@ class ParticipantsManagerWidget extends React.Component {
   }
 
   render() {
+    let t = this.context;
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose} style={{minWidth: 300}}>
-          <h3>Manage participants</h3>
+          <h3>{t["manage.participants"]}</h3>
           <div className="participants">
             {this.state.participants
             && this.state.participants.map((p, i) => {

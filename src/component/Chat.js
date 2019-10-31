@@ -2,41 +2,29 @@ import React from "react";
 import "./Chat.css"
 import Button from "./Button";
 import TextInput from "./TextInput";
+import MyContext from "../model/Context";
 
 class Chat extends React.Component {
+  static contextType = MyContext;
   constructor(props) {
     super(props);
     this.state = {
-      me: "A",
       messages: [
         {
           from: "A",
           time: "12:46",
-          img: "https://image.flaticon.com/icons/svg/145/145867.svg",
-          body: "Hi, welcome to XXX! Blah blah... blah... yep."
+          img: "",
+          body: "Hi, welcome to shared board! Blah blah... blah... yep."
         },
         {
           from: "B",
           time: "12:46",
-          img: "https://image.flaticon.com/icons/svg/145/145867.svg",
-          body: "Hi, welcome to XXX! Go ahead and send me a message."
-        },
-        {
-          from: "A",
-          time: "12:46",
-          img: "https://image.flaticon.com/icons/svg/145/145867.svg",
-          body: "Hi, welcome to XXX! Go ahead and send me a message."
-        },
-        {
-          from: "B",
-          time: "12:46",
-          img: "https://image.flaticon.com/icons/svg/145/145867.svg",
-          body: "Hi, welcome to XXX! Go ahead and send me a message."
+          img: "",
+          body: "Hi..."
         },
       ]
     };
     this.inputRef = React.createRef();
-    //this.socket = new WebSocket("ws://127.0.0.1:8089/api/chat");
     this.socket = new WebSocket(`ws://${window.location.host}/api/chat`);
     this.socket.onmessage = this.onMessage.bind(this);
   }
@@ -55,12 +43,11 @@ class Chat extends React.Component {
   }
 
   send() {
-    console.log("KEKE");
     this.socket.send(JSON.stringify(
         {
           action: "put-msg",
           message: {
-            from: this.state.me,
+            from: this.props.me || "Anonymus",
             to: "B",
             time: "12:34",
             body: this.inputRef.current.value
@@ -72,7 +59,7 @@ class Chat extends React.Component {
 
   renderMessage(msg) {
     return (
-        <div className={"msg " + (msg.from === this.state.me ? "right-msg" : "left-msg")}>
+        <div className={"msg " + (msg.from === this.props.me ? "right-msg" : "left-msg")}>
           <div className="msg-img" style={{backgroundImage: `"url(${msg.img})"`}}/>
           <div className="msg-bubble">
             <div className="msg-info">
@@ -100,6 +87,7 @@ class Chat extends React.Component {
   }
 
   render() {
+    let t = this.context;
     return (
         <div className="msger" onClick={e => e.stopPropagation()}>
           <header className="msger-header">
@@ -115,10 +103,10 @@ class Chat extends React.Component {
             }}/>
           </main>
           <div className="msger-inputarea">
-            <TextInput rref={this.inputRef} className="msger-input" placeholder="Enter your message..."
+            <TextInput rref={this.inputRef} className="msger-input" placeholder={t["enter.your.message"]}
                        onEnter={this.send.bind(this)}/>
             <Button className="msger-send-btn" style={{display: "inline-block"}}
-                    onClick={this.send.bind(this)}>Send</Button>
+                    onClick={this.send.bind(this)}>{t["send"]}</Button>
           </div>
         </div>
     );

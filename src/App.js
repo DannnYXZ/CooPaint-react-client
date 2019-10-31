@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import {TranslatorProvider, useTranslate} from "react-translate"
 import JoinBoardWidget from "./component/JoinBoardWidget";
 import Board from "./component/Board";
 import WidgetsWrapper from "./component/WidgetsWrapper";
@@ -8,18 +9,20 @@ import AccountButton from "./component/AccountButton";
 import SignUpWidget from "./component/SignUpWidget";
 import Button from "./component/Button";
 import {post, post_async} from "./model/Model";
-import {loadLocale} from "./model/Locale";
 import Drop from "./component/Drop";
 import TextInput from "./component/TextInput";
 import ParticipantsManagerWidget from "./component/ParticipantsManagerWidget";
 import BoardBrowserWidget from "./component/BoardBrowserWidget";
 import Chat from "./component/Chat";
+import MyContext from './model/Context.js'
 
 function L(text) {
   console.log(text);
 }
 
 class App extends React.Component {
+  static contextType = MyContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -32,17 +35,28 @@ class App extends React.Component {
       isBoardBrowserOpened: false,
       isParticipantsManagerOpened: false,
       isChatOpened: false,
-      name: '',
-      avatar: '',
-      boardName: 'Unnamed Board'
+      user: {},
+      boardName: 'Unnamed Board',
+      translation: {}
     };
     this.refBoardInput = React.createRef();
+    this.renderAccount.bind(this);
+    this.loadLangPack.bind(this);
   }
 
-  componentDidMount() {
-    post("/api/auth", {}, this.acceptUserData.bind(this));
-    //post("/lang-pack", {}, (locale) => loadLocale(locale));
+  async componentDidMount() {
+    await post_async("/api/auth", {}, user => this.acceptUserData(user));
+    //await post_async("/api/lang-pack", {lang: this.state.user.lang},
+    this.loadLangPack(this.state.user.lang);
     this.refBoardInput.current.value = this.state.boardName;
+  }
+
+  loadLangPack(lang) {
+    post("/api/lang-pack", {lang: lang},
+        (locale) => {
+          this.setState({translation: locale});
+          this.forceUpdate();
+        });
   }
 
   signOut() {
@@ -54,12 +68,11 @@ class App extends React.Component {
   acceptUserData(user) {
     this.setState({
       isAuthorized: true,
-      name: user.name,
-      // isJoinBoardWidgetOpened: false,
+      user: user,
       isLogInWidgetOpened: false,
       isSignUpWidgetOpened: false
     });
-    loadLocale(user.locale);
+    this.forceUpdate();
   }
 
   isWrapperOpened() {
@@ -71,12 +84,16 @@ class App extends React.Component {
   }
 
   renderAccount() {
+    console.log("rendering account");
+    console.log(this);
+    console.log(this.context);
+    let t = this.state.translation;
     return this.state.isAuthorized
-        ? <AccountButton username={this.state.name} onSignOut={() => this.signOut()}
+        ? <AccountButton username={this.state.user.name} onSignOut={() => this.signOut()}
                          isOpened={this.state.isAccountButtonOpened}
                          onClick={() => this.setState({isAccountButtonOpened: !this.state.isAccountButtonOpened})}/>
         : <Button href="#" className="btn van-btn" onClick={() => this.setState({isLogInWidgetOpened: true})}>
-          Log In or Sign Up
+          {t["log.in.or.sign.up"]}
         </Button>;
   }
 
@@ -106,71 +123,73 @@ class App extends React.Component {
   }
 
   renderManager() {
+    let t = this.state.translation;
     return (
         <div className="toolbar-tl">
           <Button onClick={() => this.setState({isMainMenuOpened: !this.state.isMainMenuOpened})}>
             <TextInput rref={this.refBoardInput} placeholder={this.state.boardName} className="trans-input"/>
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 1}}>
-              <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>Save board</Button>
-              <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>Delete</Button>
-              <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>Open saved board</Button>
-              <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>Create new board</Button>
-              <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>Manage participants</Button>
+              <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
+              <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>{t["delete"]}</Button>
+              <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
+              <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>{t["create.new.board"]}</Button>
+              <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>
             </Drop>
           </Button>
-          <Button className="btn green-btn">Invite</Button>
+          <Button className="btn green-btn">{t["invite"]}</Button>
         </div>
     );
   }
 
   render() {
     return (
-        <div className="app">
-          <WidgetsWrapper isOpened={this.isWrapperOpened()}>
-            <JoinBoardWidget onJoinBoardClick={this.onJoin.bind(this)}
-                             isOpened={this.state.isJoinBoardWidgetOpened}/>
-            <SignInWidget isOpened={this.state.isLogInWidgetOpened}
-                          onClose={() => this.setState({isLogInWidgetOpened: false})}
-                          onSignUpClick={() => {
-                            this.setState({isLogInWidgetOpened: false, isSignUpWidgetOpened: true})
-                          }}
-                          onSignedIn={(user) => this.acceptUserData(user)}/>
-            <SignUpWidget isOpened={this.state.isSignUpWidgetOpened}
-                          onClose={() => this.setState({isSignUpWidgetOpened: false})}
-                          onLogInClick={() => {
-                            this.setState({isLogInWidgetOpened: true, isSignUpWidgetOpened: false})
-                          }}
-                          onSignedUp={(user) => this.acceptUserData(user)}/>
-            <ParticipantsManagerWidget isOpened={this.state.isParticipantsManagerOpened}
-                                       onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
-            <BoardBrowserWidget isOpened={this.state.isBoardBrowserOpened}
-                                onClose={() => this.setState({isBoardBrowserOpened: false})}/>
-          </WidgetsWrapper>
-          <div className="auth-toolbar">
-            {this.renderAccount()}
+        <MyContext.Provider value={this.state.translation}>
+          <div className="app">
+            <WidgetsWrapper isOpened={this.isWrapperOpened()}>
+              <JoinBoardWidget onJoinBoardClick={this.onJoin.bind(this)}
+                               isOpened={this.state.isJoinBoardWidgetOpened}/>
+              <SignInWidget isOpened={this.state.isLogInWidgetOpened}
+                            onClose={() => this.setState({isLogInWidgetOpened: false})}
+                            onSignUpClick={() => {
+                              this.setState({isLogInWidgetOpened: false, isSignUpWidgetOpened: true})
+                            }}
+                            onSignedIn={(user) => this.acceptUserData(user)}/>
+              <SignUpWidget isOpened={this.state.isSignUpWidgetOpened}
+                            onClose={() => this.setState({isSignUpWidgetOpened: false})}
+                            onLogInClick={() => {
+                              this.setState({isLogInWidgetOpened: true, isSignUpWidgetOpened: false})
+                            }}
+                            onSignedUp={(user) => this.acceptUserData(user)}/>
+              <ParticipantsManagerWidget isOpened={this.state.isParticipantsManagerOpened}
+                                         onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
+              <BoardBrowserWidget isOpened={this.state.isBoardBrowserOpened}
+                                  onClose={() => this.setState({isBoardBrowserOpened: false})}/>
+            </WidgetsWrapper>
+            <div className="auth-toolbar">
+              {this.renderAccount()}
+            </div>
+            {this.renderManager()}
+            <div className="toolbar-bl">
+              <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}
+                      img="globe.svg">
+                <Drop style={{top: 3, left: 50}} className="drop-hr" isOpened={this.state.isDropped}>
+                  <Button className="btn trans-btn" onClick={() => this.loadLangPack("EN")}>EN</Button>
+                  <Button className="btn trans-btn" onClick={() => this.loadLangPack("RU")}>RU</Button>
+                </Drop>
+              </Button>
+            </div>
+            <div className="chat-box">
+              <Button className="btn rnd-btn" onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
+                <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
+                <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
+                  <Chat me={this.state.user.name}/>
+                </Drop>
+              </Button>
+            </div>
+            <Board/>
           </div>
-          {this.renderManager()}
-          <div className="toolbar-bl">
-            <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}
-                    img="globe.svg">
-              <Drop style={{top: 3, left: 50}} className="drop-hr" isOpened={this.state.isDropped}>
-                <Button className="btn trans-btn">EN</Button>
-                <Button className="btn trans-btn">RU</Button>
-                <Button className="btn trans-btn">DE</Button>
-              </Drop>
-            </Button>
-          </div>
-          <div className="chat-box">
-            <Button className="btn rnd-btn" onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
-              <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
-              <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
-                <Chat/>
-              </Drop>
-            </Button>
-          </div>
-          <Board/>
-        </div>
+        </MyContext.Provider>
     );
   }
 }

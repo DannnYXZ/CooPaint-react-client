@@ -5,8 +5,11 @@ import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import {post} from "../model/Model";
 import Error from "./Error";
+import MyContext from "../model/Context";
 
 class SignInWidget extends React.Component {
+  static contextType = MyContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -32,30 +35,34 @@ class SignInWidget extends React.Component {
   }
 
   render() {
+    let t = this.context;
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
-          <h1>Log In</h1>
+          <h1>{t["sign.in"]}</h1>
           <form>
-            <Error>{this.state.error}</Error>
+            <Error>{t[this.state.error]}</Error>
             <TextInput type="email"
-                       placeholder="Your email"
+                       placeholder={t["your.email"]}
                        className="van-input mb1"
                        rref={this.refEmail}
                        onEnter={this.handleOnSubmit.bind(this)}/>
             <TextInput type="password"
-                       placeholder="Enter password"
+                       placeholder={t["enter.password"]}
                        className="van-input mb1"
                        rref={this.refPassword}
                        onEnter={this.handleOnSubmit.bind(this)}/>
             <div className="hr-section">
               <a href="/restore-password">
-                <b>Forgot your password?</b>
+                <b>{t["forgot.password?"]}</b>
               </a>
-              <Button className="btn green-btn" onClick={this.handleOnSubmit.bind(this)}>LOG IN</Button>
+              <Button className="btn green-btn" onClick={this.handleOnSubmit.bind(this)}
+                      style={{textTransform: "uppercase"}}>
+                {t["sign.in"]}
+              </Button>
             </div>
             <hr/>
-            <p className="paragraph h4">Don’t have an account?&nbsp;
-              <a href="#" className="ctrl-signup" onClick={this.props.onSignUpClick}><b>Create one here!</b></a>
+            <p className="paragraph h4">{t["dont.have.an.account?"]}&nbsp;
+              <a href="#" className="ctrl-signup" onClick={this.props.onSignUpClick}><b>{t["create.one.here"]}</b></a>
             </p>
           </form>
         </ModalWidget>

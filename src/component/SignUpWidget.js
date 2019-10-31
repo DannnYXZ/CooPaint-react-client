@@ -5,8 +5,11 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import Error from "./Error";
+import MyContext from "../model/Context";
 
 class SignUpWidget extends React.Component {
+  static contextType = MyContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,27 +38,31 @@ class SignUpWidget extends React.Component {
   }
 
   render() {
+    let t = this.context;
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
-          <h1>Sign Up</h1>
+          <h1>{t["sign.up"]}</h1>
           <form>
             <Error>{this.state.error}</Error>
             <TextInput type="email"
-                       placeholder="Your email"
+                       placeholder={t["your.email"]}
                        className="van-input mb1"
                        rref={this.refEmail}
                        onEnter={this.handleOnSignUpClick.bind(this)}/>
             <TextInput type="password"
-                       placeholder="Enter password"
+                       placeholder={t["enter.password"]}
                        className="van-input mb1"
                        rref={this.refPassword}
                        onEnter={this.handleOnSignUpClick.bind(this)}/>
             <div className="hr-section fdrr">
-              <Button className="btn green-btn" onClick={this.handleOnSignUpClick.bind(this)}>SIGN UP</Button>
+              <Button className="btn green-btn" onClick={this.handleOnSignUpClick.bind(this)}
+                      style={{textTransform: "uppercase"}}>
+                {t["sign.up"]}
+              </Button>
             </div>
             <hr/>
-            <p className="paragraph h4">Got an account?&nbsp;
-              <a href="#" className="ctrl-signup" onClick={this.props.onLogInClick}><b>Log in here!</b></a>
+            <p className="paragraph h4">{t["got.an.account?"]}&nbsp;
+              <a href="#" className="ctrl-signup" onClick={this.props.onLogInClick}><b>{t["log.in.here"]}</b></a>
             </p>
           </form>
         </ModalWidget>
