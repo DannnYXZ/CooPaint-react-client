@@ -15,6 +15,7 @@ import ParticipantsManagerWidget from "./component/ParticipantsManagerWidget";
 import BoardBrowserWidget from "./component/BoardBrowserWidget";
 import Chat from "./component/Chat";
 import MyContext from './model/Context.js'
+import AccountEditor from "./component/AccountEditor";
 
 function L(text) {
   console.log(text);
@@ -129,7 +130,7 @@ class App extends React.Component {
           <Button onClick={() => this.setState({isMainMenuOpened: !this.state.isMainMenuOpened})}>
             <TextInput rref={this.refBoardInput} placeholder={this.state.boardName} className="trans-input"/>
             <img src="dropdown.svg"/>
-            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 1}}>
+            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>{t["delete"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
@@ -166,10 +167,15 @@ class App extends React.Component {
               <BoardBrowserWidget isOpened={this.state.isBoardBrowserOpened}
                                   onClose={() => this.setState({isBoardBrowserOpened: false})}/>
             </WidgetsWrapper>
-            <div className="auth-toolbar">
-              {this.renderAccount()}
+
+            <div className="top-toolbars">
+
+              <AccountEditor/>
+              {this.renderManager()}
+              <div className="auth-toolbar">
+                {this.renderAccount()}
+              </div>
             </div>
-            {this.renderManager()}
             <div className="toolbar-bl">
               <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}
                       img="globe.svg">

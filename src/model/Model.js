@@ -44,3 +44,15 @@ export async function post_async(url, object, ok_callback, fail_callback) {
     if (fail_callback) fail_callback(json);
   }
 }
+
+export function sendRequest(file) {
+  return new Promise((resolve, reject) => {
+    const req = new XMLHttpRequest();
+
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    req.open("POST", "/api/upload-avatar");
+    req.send(formData);
+  });
+}
