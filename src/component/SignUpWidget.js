@@ -30,7 +30,6 @@ class SignUpWidget extends React.Component {
 
   handleOnSignUpClick() {
     let user = {
-      name: this.refEmail.current.value,
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     };
