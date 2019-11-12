@@ -6,6 +6,7 @@ import MyContext from "../model/Context";
 
 class Chat extends React.Component {
   static contextType = MyContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -22,7 +23,8 @@ class Chat extends React.Component {
           img: "",
           body: "Hi..."
         },
-      ]
+      ],
+      user: props.user
     };
     this.inputRef = React.createRef();
     this.socket = new WebSocket(`ws://${window.location.host}/coopaint/chat`);

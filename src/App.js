@@ -90,7 +90,7 @@ class App extends React.Component {
     console.log(this.context);
     let t = this.state.translation;
     return this.state.isAuthorized
-        ? <AccountButton username={this.state.user.name} onSignOut={() => this.signOut()}
+        ? <AccountButton user={this.state.user} onSignOut={() => this.signOut()}
                          isOpened={this.state.isAccountButtonOpened}
                          onClick={() => this.setState({isAccountButtonOpened: !this.state.isAccountButtonOpened})}/>
         : <Button href="#" className="btn van-btn" onClick={() => this.setState({isLogInWidgetOpened: true})}>
@@ -170,7 +170,7 @@ class App extends React.Component {
 
             <div className="top-toolbars">
 
-              <AccountEditor/>
+              <AccountEditor onAccountUpdated={(user) => this.acceptUserData(user)}/>
               {this.renderManager()}
               <div className="auth-toolbar">
                 {this.renderAccount()}
