@@ -19,16 +19,17 @@ class AccountEditor extends React.Component {
     this.setState({
       selectedFile: e.target.files[0]
     });
-    post('/api/set-avatar', {}, (res) => {
+    post('/set-avatar', {}, (res) => {
       const formData = new FormData();
       formData.append('file', this.state.selectedFile);
       //formData.append("fileToUpload[]", document.getElementById('fileToUpload').files[0]
-      fetch('/api/upload-file', {
+      fetch('/coopaint/upload-file', {
         method: 'post',
         body: formData
       }).then(res => {
         if (res.ok) {
           console.log(res.data);
+          this.setState({user: res.data});
           alert("File uploaded successfully.")
         }
       });

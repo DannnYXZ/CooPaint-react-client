@@ -33,7 +33,7 @@ class SignUpWidget extends React.Component {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     };
-    post("/api/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.message}));
+    post("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.message}));
   }
 
   render() {

@@ -46,14 +46,14 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    await post_async("/api/auth", {}, user => this.acceptUserData(user));
+    await post_async("/auth", {}, user => this.acceptUserData(user));
     //await post_async("/api/lang-pack", {lang: this.state.user.lang},
     this.loadLangPack(this.state.user.lang);
     this.refBoardInput.current.value = this.state.boardName;
   }
 
   loadLangPack(lang) {
-    post("/api/lang-pack", {lang: lang},
+    post("/lang-pack", {lang: lang},
         (locale) => {
           this.setState({translation: locale});
           this.forceUpdate();
@@ -61,7 +61,7 @@ class App extends React.Component {
   }
 
   signOut() {
-    post("/api/sign-out", {}, () => {
+    post("/sign-out", {}, () => {
       this.setState({isAuthorized: false})
     });
   }
@@ -115,7 +115,7 @@ class App extends React.Component {
   }
 
   onCreate() {
-    post("/api/save-board", {})
+    post("/save-board", {})
   }
 
   onManage() {

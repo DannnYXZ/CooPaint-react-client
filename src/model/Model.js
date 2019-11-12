@@ -1,5 +1,6 @@
+const appName="/coopaint";
 export function post(url, object, ok_callback, fail_callback) {
-  fetch(url, {
+  fetch(appName + url, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(object),
@@ -24,7 +25,7 @@ export function post(url, object, ok_callback, fail_callback) {
 }
 
 export async function post_async(url, object, ok_callback, fail_callback) {
-  const response = await fetch(url, {
+  const response = await fetch(appName + url, {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(object),

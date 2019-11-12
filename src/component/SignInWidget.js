@@ -27,7 +27,7 @@ class SignInWidget extends React.Component {
   }
 
   handleOnSubmit(e) {
-    post("/api/sign-in", {
+    post("/sign-in", {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     }, this.onSignedIn.bind(this), (error) => this.setState({error: error.message}));

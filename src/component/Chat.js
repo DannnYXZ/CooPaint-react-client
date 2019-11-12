@@ -25,7 +25,7 @@ class Chat extends React.Component {
       ]
     };
     this.inputRef = React.createRef();
-    this.socket = new WebSocket(`ws://${window.location.host}/api/chat`);
+    this.socket = new WebSocket(`ws://${window.location.host}/coopaint/chat`);
     this.socket.onmessage = this.onMessage.bind(this);
   }
 
