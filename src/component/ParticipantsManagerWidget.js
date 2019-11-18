@@ -55,7 +55,7 @@ class ParticipantsManagerWidget extends React.Component {
             {this.state.participants
             && this.state.participants.map((p, i) => {
                   let buttonState = p.edit;
-                  return <div className="participant">
+                  return <div className="participant" key={i}>
                     <div className="participant-info">
                       <Logo img={p.avatar}/>
                       {p.name}

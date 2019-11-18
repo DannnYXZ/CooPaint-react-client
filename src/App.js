@@ -64,11 +64,12 @@ class App extends React.Component {
     post("/sign-out", {}, () => {
       this.setState({isAuthorized: false})
     });
+    this.setState({isAccountButtonOpened: false});
   }
 
   acceptUserData(user) {
     this.setState({
-      isAuthorized: true,
+      isAuthorized: user.isAuth,
       user: user,
       isLogInWidgetOpened: false,
       isSignUpWidgetOpened: false
@@ -130,7 +131,7 @@ class App extends React.Component {
           <Button onClick={() => this.setState({isMainMenuOpened: !this.state.isMainMenuOpened})}>
             <TextInput rref={this.refBoardInput} placeholder={this.state.boardName} className="trans-input"/>
             <img src="dropdown.svg"/>
-            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
+            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 57, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>{t["delete"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
@@ -189,7 +190,7 @@ class App extends React.Component {
               <Button className="btn rnd-btn" onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
                 <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
                 <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
-                  <Chat me={this.state.user.name}/>
+                  <Chat user={this.state.user}/>
                 </Drop>
               </Button>
             </div>

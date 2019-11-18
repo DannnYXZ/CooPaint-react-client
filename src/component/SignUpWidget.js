@@ -42,7 +42,7 @@ class SignUpWidget extends React.Component {
         <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
           <h1>{t["sign.up"]}</h1>
           <form>
-            <Error>{this.state.error}</Error>
+            <Error>{t[this.state.error]}</Error>
             <TextInput type="email"
                        placeholder={t["your.email"]}
                        className="van-input mb1"

@@ -7,7 +7,7 @@ class Tabs extends React.Component {
     return (
         <ul className="tabs">
           {this.props.children.map((e, i) =>
-              <li className={"tab-item " + (i === this.props.activeTab ? "tab-active" : "")}>
+              <li className={"tab-item " + (i === this.props.activeTab ? "tab-active" : "")} key={i}>
                 {e}
               </li>
           )}

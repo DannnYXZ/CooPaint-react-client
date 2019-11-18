@@ -24,21 +24,32 @@ class Chat extends React.Component {
           body: "Hi..."
         },
       ],
-      user: props.user
+      user: props.user,
+      chatUUID: "123e4567-e89b-12d3-a456-426655440000"
     };
     this.inputRef = React.createRef();
     this.socket = new WebSocket(`ws://${window.location.host}/coopaint/chat`);
+    //this.readChatHistory();
     this.socket.onmessage = this.onMessage.bind(this);
+  }
+
+  readChatHistory() {
+    this.socket.send(JSON.stringify(
+        {
+          method: "GET",
+          url: `/chat/${this.state.chatUUID}`
+        }
+    ));
   }
 
   onMessage(event) {
     let json = JSON.parse(event.data);
     switch (json.action) {
-      case "put-msg":
-        this.setState({messages: this.state.messages.concat([json.message])});
-        break;
-      case "remove-msg":
+      case "remove-messages":
 
+        break;
+      case "add-messages":
+        this.setState({messages: this.state.messages.concat([json.message])});
         break;
     }
     console.log(event.data);
@@ -47,12 +58,15 @@ class Chat extends React.Component {
   send() {
     this.socket.send(JSON.stringify(
         {
-          action: "put-msg",
-          message: {
-            from: this.props.me || "Anonymus",
-            to: "B",
-            time: "12:34",
-            body: this.inputRef.current.value
+          method: "POST",
+          url: `/chat/${this.state.chatUUID}`,
+          body: {
+            message: {
+              from: this.props.me || "Anonymus",
+              to: "B",
+              time: "12:34",
+              body: this.inputRef.current.value
+            }
           }
         }
     ));
@@ -61,7 +75,7 @@ class Chat extends React.Component {
 
   renderMessage(msg) {
     return (
-        <div className={"msg " + (msg.from === this.props.me ? "right-msg" : "left-msg")}>
+        <div className={"msg " + (msg.from === this.props.me ? "right-msg" : "left-msg")} key={msg.id}>
           <div className="msg-img" style={{backgroundImage: `"url(${msg.img})"`}}/>
           <div className="msg-bubble">
             <div className="msg-info">
