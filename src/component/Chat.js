@@ -37,7 +37,7 @@ class Chat extends React.Component {
     };
     this.inputRef = React.createRef();
     this.socket = new WebSocket(`ws://${window.location.host}/coopaint/chat`);
-    //this.readChatHistory();
+    this.socket.onopen = () => this.connectToChat(this.state.chatUUID);
     this.socket.onmessage = this.onMessage.bind(this);
   }
 
@@ -53,8 +53,8 @@ class Chat extends React.Component {
   connectToChat(chatUUID) {
     this.socket.send(JSON.stringify(
         {
-          method: method.POST,
-          url: `/chat/${this.state.chatUUID}`
+          method: method.GET,
+          url: `/chat/${chatUUID}`
         }
     ));
   }

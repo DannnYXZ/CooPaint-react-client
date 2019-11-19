@@ -19,14 +19,15 @@ class SignInWidget extends React.Component {
     this.refPassword = React.createRef();
   }
 
-  clearInputs() {
+  clearWidget() {
     this.refEmail.current.value = '';
     this.refPassword.current.value = '';
+    this.setState({error: ''})
   }
 
   onSignedIn(user) {
     this.props.onSignedIn(user);
-    this.clearInputs();
+    this.clearWidget();
     this.setState({error: ''});
   }
 
@@ -43,7 +44,7 @@ class SignInWidget extends React.Component {
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={() => {
           this.props.onClose();
-          this.clearInputs();
+          this.clearWidget();
         }}>
           <h1>{t["sign.in"]}</h1>
           <form>
