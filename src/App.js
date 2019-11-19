@@ -34,6 +34,7 @@ class App extends React.Component {
       isMainMenuOpened: false,
       isBoardBrowserOpened: false,
       isParticipantsManagerOpened: false,
+      isLangSelectorOpened: false,
       isChatOpened: false,
       user: {},
       boardName: 'Unnamed Board',
@@ -54,7 +55,7 @@ class App extends React.Component {
   loadLangPack(lang) {
     post("/lang-pack", {lang: lang},
         (locale) => {
-          this.setState({translation: locale});
+          this.setState({translation: locale, isLangSelectorOpened: false});
           this.forceUpdate();
         });
   }
@@ -176,9 +177,10 @@ class App extends React.Component {
               </div>
             </div>
             <div className="toolbar-bl">
-              <Button className="rnd-btn" onClick={() => this.setState({isDropped: !this.state.isDropped})}
+              <Button className="rnd-btn"
+                      onClick={() => this.setState({isLangSelectorOpened: !this.state.isLangSelectorOpened})}
                       img="globe.svg">
-                <Drop style={{top: 3, left: 50}} className="drop-hr" isOpened={this.state.isDropped}>
+                <Drop style={{top: 3, left: 50}} className="drop-hr" isOpened={this.state.isLangSelectorOpened}>
                   <Button className="btn trans-btn" onClick={() => this.loadLangPack("EN")}>EN</Button>
                   <Button className="btn trans-btn" onClick={() => this.loadLangPack("RU")}>RU</Button>
                 </Drop>
