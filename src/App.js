@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import {TranslatorProvider, useTranslate} from "react-translate"
 import JoinBoardWidget from "./component/JoinBoardWidget";
 import Board from "./component/Board";
 import WidgetsWrapper from "./component/WidgetsWrapper";

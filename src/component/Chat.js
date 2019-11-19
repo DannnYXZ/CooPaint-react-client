@@ -4,8 +4,16 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 import MyContext from "../model/Context";
 
+const method = {
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  DELETE: "DELETE"
+};
+
 class Chat extends React.Component {
   static contextType = MyContext;
+
 
   constructor(props) {
     super(props);
@@ -36,8 +44,17 @@ class Chat extends React.Component {
   readChatHistory() {
     this.socket.send(JSON.stringify(
         {
-          method: "GET",
+          method: method.GET,
           url: `/chat/${this.state.chatUUID}`
+        }
+    ));
+  }
+
+  connectToChat(chatUUID) {
+    this.socket.send(JSON.stringify(
+        {
+          method: method.POST,
+          url: `/chat-connect/${this.state.chatUUID}`
         }
     ));
   }
@@ -58,7 +75,7 @@ class Chat extends React.Component {
   send() {
     this.socket.send(JSON.stringify(
         {
-          method: "POST",
+          method: method.POST,
           url: `/chat/${this.state.chatUUID}`,
           body: {
             message: {
