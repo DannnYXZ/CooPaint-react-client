@@ -21,10 +21,14 @@ class SignUpWidget extends React.Component {
     this.refPassword = React.createRef();
   }
 
-  onSignedUp(user) {
-    this.props.onSignedUp(user);
+  clearInputs() {
     this.refEmail.current.value = '';
     this.refPassword.current.value = '';
+  }
+
+  onSignedUp(user) {
+    this.props.onSignedUp(user);
+    this.clearInputs();
     this.setState({error: ''});
   }
 
@@ -33,13 +37,16 @@ class SignUpWidget extends React.Component {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     };
-    post("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.message}));
+    post("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
   }
 
   render() {
     let t = this.context;
     return (
-        <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose}>
+        <ModalWidget isOpened={this.props.isOpened} onClose={() => {
+          this.props.onClose();
+          this.clearInputs();
+        }}>
           <h1>{t["sign.up"]}</h1>
           <form>
             <Error>{t[this.state.error]}</Error>

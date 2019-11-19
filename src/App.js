@@ -131,7 +131,7 @@ class App extends React.Component {
           <Button onClick={() => this.setState({isMainMenuOpened: !this.state.isMainMenuOpened})}>
             <TextInput rref={this.refBoardInput} placeholder={this.state.boardName} className="trans-input"/>
             <img src="dropdown.svg"/>
-            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 57, left: 0}}>
+            <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>{t["delete"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
