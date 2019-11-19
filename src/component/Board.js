@@ -2,7 +2,7 @@ import React from "react";
 import './Board.css'
 import Canvas from "./Canvas";
 import ToolsMenu from "./ToolsMenu";
-import {post} from "../model/Model";
+import {post} from "../model/Net";
 
 class Board extends React.Component {
   constructor(props) {

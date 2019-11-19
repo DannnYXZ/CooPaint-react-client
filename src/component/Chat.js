@@ -45,7 +45,7 @@ class Chat extends React.Component {
     this.socket.send(JSON.stringify(
         {
           method: method.GET,
-          url: `/chat/${this.state.chatUUID}`
+          url: `/chat/${this.state.chatUUID}/messages`
         }
     ));
   }
@@ -54,7 +54,7 @@ class Chat extends React.Component {
     this.socket.send(JSON.stringify(
         {
           method: method.POST,
-          url: `/chat-connect/${this.state.chatUUID}`
+          url: `/chat/${this.state.chatUUID}`
         }
     ));
   }
@@ -66,25 +66,26 @@ class Chat extends React.Component {
 
         break;
       case "add-messages":
-        this.setState({messages: this.state.messages.concat([json.message])});
+        this.setState({messages: this.state.messages.concat(json.messages)});
+        break;
+      case "connect":
+        this.setState({chatUUID: json.id});
         break;
     }
     console.log(event.data);
   }
 
-  send() {
+  sendMessages() {
     this.socket.send(JSON.stringify(
         {
           method: method.POST,
-          url: `/chat/${this.state.chatUUID}`,
-          body: {
-            message: {
-              from: this.props.me || "Anonymus",
-              to: "B",
-              time: "12:34",
-              body: this.inputRef.current.value
-            }
-          }
+          url: `/chat/${this.state.chatUUID}/messages`,
+          body: [{
+            from: this.props.me || "Anonymus",
+            to: "B",
+            time: "12:34",
+            body: this.inputRef.current.value
+          }]
         }
     ));
     this.inputRef.current.value = '';
@@ -137,9 +138,9 @@ class Chat extends React.Component {
           </main>
           <div className="msger-inputarea">
             <TextInput rref={this.inputRef} className="msger-input" placeholder={t["enter.your.message"]}
-                       onEnter={this.send.bind(this)}/>
+                       onEnter={this.sendMessages.bind(this)}/>
             <Button className="msger-send-btn" style={{display: "inline-block"}}
-                    onClick={this.send.bind(this)}>{t["send"]}</Button>
+                    onClick={this.sendMessages.bind(this)}>{t["send"]}</Button>
           </div>
         </div>
     );

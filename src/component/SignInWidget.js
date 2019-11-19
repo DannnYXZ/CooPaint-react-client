@@ -3,7 +3,7 @@ import './Main.css'
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
-import {post} from "../model/Model";
+import {post} from "../model/Net";
 import Error from "./Error";
 import MyContext from "../model/Context";
 

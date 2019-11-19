@@ -7,13 +7,13 @@ import SignInWidget from "./component/SignInWidget";
 import AccountButton from "./component/AccountButton";
 import SignUpWidget from "./component/SignUpWidget";
 import Button from "./component/Button";
-import {post, post_async} from "./model/Model";
+import {post, post_async} from "./model/Net";
 import Drop from "./component/Drop";
 import TextInput from "./component/TextInput";
 import ParticipantsManagerWidget from "./component/ParticipantsManagerWidget";
 import BoardBrowserWidget from "./component/BoardBrowserWidget";
 import Chat from "./component/Chat";
-import MyContext from './model/Context.js'
+import i18nContext from './model/Context.js'
 import AccountEditor from "./component/AccountEditor";
 
 function L(text) {
@@ -21,7 +21,7 @@ function L(text) {
 }
 
 class App extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
 
   constructor(props) {
     super(props);
@@ -145,7 +145,7 @@ class App extends React.Component {
 
   render() {
     return (
-        <MyContext.Provider value={this.state.translation}>
+        <i18nContext.Provider value={this.state.translation}>
           <div className="app">
             <WidgetsWrapper isOpened={this.isWrapperOpened()}>
               <JoinBoardWidget onJoinBoardClick={this.onJoin.bind(this)}
@@ -169,8 +169,7 @@ class App extends React.Component {
             </WidgetsWrapper>
 
             <div className="top-toolbars">
-
-              <AccountEditor onAccountUpdated={(user) => this.acceptUserData(user)}/>
+              <AccountEditor onAccountUpdated={(user) => this.acceptUserData(user)} user={this.state.user}/>
               {this.renderManager()}
               <div className="auth-toolbar">
                 {this.renderAccount()}
@@ -195,7 +194,7 @@ class App extends React.Component {
             </div>
             <Board/>
           </div>
-        </MyContext.Provider>
+        </i18nContext.Provider>
     );
   }
 }

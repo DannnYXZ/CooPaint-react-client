@@ -5,6 +5,7 @@
     z-index: 500;
     border-radius: 8px;
     background-color: #f0f0f0;
+    overflow:hidden
 }
 
 .drop li:not(:last-child) {
@@ -19,6 +20,7 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
+    overflow:hidden;
     background-color: #f0f0f0;
 }
 

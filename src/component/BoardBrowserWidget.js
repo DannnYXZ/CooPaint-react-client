@@ -4,7 +4,7 @@ import "./BoardBrowser.css"
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
-import {post, post_async} from "../model/Model";
+import {post, post_async} from "../model/Net";
 import Error from "./Error";
 import Tabs from "./Tabs";
 import BoardCover from "./BoardCover";

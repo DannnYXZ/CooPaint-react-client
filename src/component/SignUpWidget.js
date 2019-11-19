@@ -1,6 +1,6 @@
 import React from "react";
 import "./Main.css"
-import {post} from "../model/Model";
+import {post} from "../model/Net";
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
