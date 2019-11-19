@@ -32,7 +32,7 @@ class Chat extends React.Component {
           body: "Hi..."
         },
       ],
-      user: props.user,
+      user: props.user || {},
       chatUUID: "123e4567-e89b-12d3-a456-426655440000"
     };
     this.inputRef = React.createRef();
@@ -57,6 +57,7 @@ class Chat extends React.Component {
           url: `/chat/${chatUUID}`
         }
     ));
+    this.readChatHistory();
   }
 
   onMessage(event) {
@@ -81,7 +82,7 @@ class Chat extends React.Component {
           method: method.POST,
           url: `/chat/${this.state.chatUUID}/messages`,
           body: [{
-            from: this.props.me || "Anonymus",
+            from: this.props.user.name || "Anonymus",
             to: "B",
             time: "12:34",
             body: this.inputRef.current.value
@@ -93,7 +94,7 @@ class Chat extends React.Component {
 
   renderMessage(msg) {
     return (
-        <div className={"msg " + (msg.from === this.props.me ? "right-msg" : "left-msg")} key={msg.id}>
+        <div className={"msg " + (msg.from === this.props.user.name ? "right-msg" : "left-msg")} key={msg.id}>
           <div className="msg-img" style={{backgroundImage: `"url(${msg.img})"`}}/>
           <div className="msg-bubble">
             <div className="msg-info">
