@@ -1,30 +1,44 @@
 import React from "react";
-import Button from "./AccountEditor.css";
-import MyContext from "../model/Context";
+import Button from "./Button";
+import i18nContext from "../model/i18nContext";
 import {post} from "../model/Net";
 import Icon from "./Icon";
+import TextInput from "./TextInput";
+import "./Main.css"
+import TabsBrowser from "./TabsBrowser";
 
 class AccountEditor extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
 
   constructor(props) {
     super(props);
-    this.state = {
-      user: {}
-    }
+    this.emailInput = React.createRef();
+    this.passwordInput = React.createRef();
+    this.nameInput = React.createRef();
+  }
+
+  componentDidMount() {
+    this.refreshUser();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    this.refreshUser();
+  }
+
+  refreshUser() {
+    this.emailInput.current.value = this.props.user.email;
+    this.nameInput.current.value = this.props.user.name;
   }
 
   onFileChanged(e) {
     e.preventDefault();
     if (e.target.files[0] === null)
       return;
-    this.setState({
-      selectedFile: e.target.files[0]
-    });
+    let selectedFile = e.target.files[0];
     // TODO: cleanup
     post('/set-avatar', {}, (res) => {
       const formData = new FormData();
-      formData.append('file', this.state.selectedFile);
+      formData.append('file', selectedFile);
       fetch('/coopaint/upload-file', {
         method: 'post',
         body: formData
@@ -35,21 +49,46 @@ class AccountEditor extends React.Component {
           return res.json();
         }
       }).then(json => {
-            this.setState({user: json});
-            this.props.onAccountUpdated(this.state.user);
+            this.props.acceptUserData(json);
           }
       );
     })
   }
 
+  onInputsChanged() {
+    console.log(this.refs.email);
+  }
+
+  submit() {
+    post("/coopaint/users", this.state.user);
+  }
+
   render() {
     let t = this.context;
+    let m = 20;
     return (
-        <div className="account-editor">
-          <div className="choose-avatar" onClick={() => document.getElementById("avatar-input").click()}>
-            <Icon img={this.props.user.avatar}/>
-            <input id="avatar-input" type="file" onChange={this.onFileChanged.bind(this)} style={{display: "none"}}/>
-          </div>
+        <div className="account-editor round-panel">
+
+          <TabsBrowser activeTab={0} tabNames={["Account", "Board repository"]}>
+            <div className="account-editor">
+              <div className="choose-avatar" onClick={() => document.getElementById("avatar-input").click()}
+                   style={{marginBottom: m}}>
+                <Icon img={this.props.user.avatar}/>
+                <input id="avatar-input" type="file" onChange={this.onFileChanged.bind(this)}
+                       style={{display: "none"}}/>
+              </div>
+              <span>{t["email"]}</span>
+              <TextInput rref={this.emailInput} onChange={this.onInputsChanged.bind(this)} style={{marginBottom: m}}/>
+              <span>{t["name"]}</span>
+              <TextInput rref={this.nameInput} style={{marginBottom: m}}/>
+              <span>{t["password.change"]}</span>
+              <TextInput rref={this.passwordInput} style={{marginBottom: m}}/>
+              <Button className="btn green-btn" style={{width: 120}}>{t["send"]}</Button>
+            </div>
+
+            <div>SALAMI</div>
+          </TabsBrowser>
+
         </div>
     );
   }

@@ -5,10 +5,10 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import Error from "./Error";
-import MyContext from "../model/Context";
+import i18nContext from "../model/i18nContext";
 
 class SignUpWidget extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
 
   constructor(props) {
     super(props);
@@ -44,7 +44,9 @@ class SignUpWidget extends React.Component {
   render() {
     let t = this.context;
     return (
-        <ModalWidget isOpened={this.props.isOpened} onClose={() => {
+        <ModalWidget isOpened={this.props.isOpened}
+                    style={{minWidth: 408}}
+                     onClose={() => {
           this.props.onClose();
           this.clearWidget();
         }}>

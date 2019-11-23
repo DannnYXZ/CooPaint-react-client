@@ -1,3 +1,6 @@
 .account-editor:hover {
     cursor: pointer;
 }
+.account-editor {
+    background-color: #666666;
+}

@@ -2,7 +2,7 @@ import React from "react";
 import "./Chat.css"
 import Button from "./Button";
 import TextInput from "./TextInput";
-import MyContext from "../model/Context";
+import i18nContext from "../model/i18nContext.js";
 
 const method = {
   GET: "GET",
@@ -12,8 +12,7 @@ const method = {
 };
 
 class Chat extends React.Component {
-  static contextType = MyContext;
-
+  static contextType = i18nContext;
 
   constructor(props) {
     super(props);
@@ -60,22 +59,6 @@ class Chat extends React.Component {
     this.readChatHistory();
   }
 
-  onMessage(event) {
-    let json = JSON.parse(event.data);
-    switch (json.action) {
-      case "remove-messages":
-
-        break;
-      case "add-messages":
-        this.setState({messages: this.state.messages.concat(json.messages)});
-        break;
-      case "connect":
-        this.setState({chatUUID: json.id});
-        break;
-    }
-    console.log(event.data);
-  }
-
   sendMessages() {
     this.socket.send(JSON.stringify(
         {
@@ -90,6 +73,22 @@ class Chat extends React.Component {
         }
     ));
     this.inputRef.current.value = '';
+  }
+
+  onMessage(event) {
+    let json = JSON.parse(event.data);
+    switch (json.action) {
+      case "remove-messages":
+
+        break;
+      case "add-messages":
+        this.setState({messages: this.state.messages.concat(json.messages)});
+        break;
+      case "connect":
+        this.setState({chatUUID: json.id});
+        break;
+    }
+    console.log(event.data);
   }
 
   renderMessage(msg) {
@@ -123,6 +122,8 @@ class Chat extends React.Component {
 
   render() {
     let t = this.context;
+    console.log("chat context");
+    console.log(t);
     return (
         <div className="msger" onClick={e => e.stopPropagation()}>
           <header className="msger-header">
@@ -139,7 +140,8 @@ class Chat extends React.Component {
           </main>
           <div className="msger-inputarea">
             <TextInput rref={this.inputRef} className="msger-input" placeholder={t["enter.your.message"]}
-                       onEnter={this.sendMessages.bind(this)}/>
+                       onEnter={this.sendMessages.bind(this)}
+                       style={{height: 40}}/>
             <Button className="msger-send-btn" style={{display: "inline-block"}}
                     onClick={this.sendMessages.bind(this)}>{t["send"]}</Button>
           </div>

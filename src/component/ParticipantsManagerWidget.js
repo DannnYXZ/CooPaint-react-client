@@ -1,16 +1,14 @@
 import React from "react";
 import "./ParticipantsManager.css"
-import Button from "./Button";
-import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import {post} from "../model/Net";
-import Error from "./Error";
 import ToggleButton from "./ToggleButton";
 import Logo from "./Logo";
-import MyContext from "../model/Context";
+import i18nContext from "../model/i18nContext";
 
 class ParticipantsManagerWidget extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
+
   constructor(props) {
     super(props);
     this.state = {

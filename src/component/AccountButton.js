@@ -1,11 +1,12 @@
 import React from "react";
 import Button from "./Button";
 import Drop from "./Drop";
-import MyContext from "../model/Context";
+import i18nContext from "../model/i18nContext";
 import Icon from "./Icon";
+import {Link} from "react-router-dom";
 
 class AccountButton extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
 
   render() {
     let t = this.context;
@@ -15,6 +16,9 @@ class AccountButton extends React.Component {
           <span style={{margin: "0 8px"}}>{this.props.user.name}</span>
           <img src="dropdown.svg"/>
           <Drop isOpened={this.props.isOpened} style={{top: 50}}>
+            <Link to="/account">
+              <Button className="btn trans-btn">{t["account"]}</Button>
+            </Link>
             <Button className="btn trans-btn" onClick={this.props.onSignOut}>{t["sign.out"]}</Button>
           </Drop>
         </Button>

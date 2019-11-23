@@ -5,10 +5,10 @@ import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import {post} from "../model/Net";
 import Error from "./Error";
-import MyContext from "../model/Context";
+import i18nContext from "../model/i18nContext";
 
 class SignInWidget extends React.Component {
-  static contextType = MyContext;
+  static contextType = i18nContext;
 
   constructor(props) {
     super(props);
@@ -26,9 +26,8 @@ class SignInWidget extends React.Component {
   }
 
   onSignedIn(user) {
-    this.props.onSignedIn(user);
     this.clearWidget();
-    this.setState({error: ''});
+    this.props.onSignedIn(user);
   }
 
   handleOnSubmit(e) {
@@ -43,8 +42,8 @@ class SignInWidget extends React.Component {
     let t = this.context;
     return (
         <ModalWidget isOpened={this.props.isOpened} onClose={() => {
-          this.props.onClose();
           this.clearWidget();
+          this.props.onClose();
         }}>
           <h1>{t["sign.in"]}</h1>
           <form>
