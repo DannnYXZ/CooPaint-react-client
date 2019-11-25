@@ -18,14 +18,25 @@ class App extends React.Component {
     this.state = {
       user: {},
       translation: {},
-      isLangSelectorOpened: false
+      isLangSelectorOpened: false,
+      ws: null
     };
-    this.loadLangPack.bind(this);
+
+    //this.socket.onopen = () => this.connectToChat(this.state.chatUUID);
+    //this.socket.onmessage = this.onMessage.bind(this);
+
+    //this.socket.addEventListener('open', () => console.log("AAAAAAAAAAAAAAAAAAAAA"));
+    //this.socket.addEventListener('open', () => console.log("BBBBBBBBBBBBBBBBBBBBB"));
   }
 
   async componentDidMount() {
     await post_async("/auth", {}, user => this.acceptUserData(user));
     this.loadLangPack(this.state.user.lang);
+
+    let ws = new WebSocket(`ws://${window.location.host}/coopaint/ws`);
+    ws.onopen = () => this.setState({ws: ws});
+    //this.socket.addEventListener('open', () => console.log("AAAAAAAAAAAAAAAAAAAAA"));
+    //this.socket.addEventListener('open', () => console.log("BBBBBBBBBBBBBBBBBBBBB"));
   }
 
   signOut() {
@@ -69,7 +80,6 @@ class App extends React.Component {
   }
 
   onManage() {
-
     this.setState({isParticipantsManagerOpened: true});
   }
 
@@ -86,6 +96,7 @@ class App extends React.Component {
         <Editor user={this.state.user}
                 signOut={() => this.signOut()}
                 acceptUserData={this.acceptUserData.bind(this)}
+                ws={this.state.ws}
                 {...props}/>
     );
   }

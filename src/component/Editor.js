@@ -14,6 +14,8 @@ import ParticipantsManagerWidget from "./ParticipantsManagerWidget";
 import BoardBrowserWidget from "./BoardBrowserWidget";
 import Chat from "./Chat";
 import i18nContext from "../model/i18nContext.js"
+import {method} from "../model/config";
+import {withRouter} from "react-router-dom";
 
 class Editor extends React.Component {
   static contextType = i18nContext;
@@ -34,12 +36,45 @@ class Editor extends React.Component {
       }
     };
     this.refBoardInput = React.createRef();
+    this.refChat = React.createRef();
     this.renderAccount.bind(this);
+  }
+
+  onMessage(e) {
+    let json = JSON.parse(e.data);
+    switch (json.action) {
+      case "add-snapshot":
+        // if (this.props.match) {
+        //   // link scenario
+        // } else {
+        //   //
+        // }
+        console.log("SALAMI");
+        let snapshot = json.body;
+        this.props.history.push(`/b/${snapshot.link}`);
+        this.setState({chatUUID: snapshot.chatID, boardUUID: snapshot.boardID});
+        break;
+    }
   }
 
   componentDidMount() {
     console.log(this.props);
-    console.log("sdfasdsd");
+    // let {snapshot} = this.props.match.params;
+    // this.props.ws.addEventListener("message", this.onMessage.bind(this));
+    // this.props.ws.addEventListener("open",)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevProps.ws && this.props.ws) {
+      console.log("YEP, IT is");
+      this.props.ws.addEventListener("message", this.onMessage.bind(this));
+      let snapshot = this.props.match.params.snapshot;
+      if (snapshot){
+        console.log("MATCHED");
+        console.log(this.props.match);
+        this.takeSnapshot(snapshot);
+      }
+    }
   }
 
   onJoin(boardName) {
@@ -59,12 +94,26 @@ class Editor extends React.Component {
   }
 
   onCreate() {
-    post("/save-board", {})
+    post("/save-board", {});
   }
 
   onManage() {
-
     this.setState({isParticipantsManagerOpened: true});
+  }
+
+  takeSnapshot(url) {
+    // if empty -> creates
+    console.log("connectiong to" + url);
+    try {
+      this.props.ws.send(JSON.stringify(
+          {
+            method: method.GET,
+            url: `/snapshot/${url}`
+          }
+      ));
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   isWrapperOpened() {
@@ -101,7 +150,7 @@ class Editor extends React.Component {
               <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>
             </Drop>
           </Button>
-          <Button className="btn green-btn">{t["invite"]}</Button>
+          <Button className="btn green-btn" onClick={() => this.takeSnapshot("")}>{t["invite"]}</Button>
         </div>
     );
   }
@@ -147,16 +196,21 @@ class Editor extends React.Component {
                     onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
               <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
               <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
-                <Chat user={this.props.user}/>
+                <Chat ref={this.refChat}
+                      user={this.props.user}
+                      chatUUID={this.state.chatUUID}
+                      ws={this.props.ws}/>
               </Drop>
             </Button>
           </div>
-          <Board board={this.state.board}/>
+          <Board ws={this.props.ws}
+                 board={this.state.board}
+          />
         </div>
     );
   }
 }
 
-export default Editor;
+export default withRouter(Editor);
 
 // TODO: routing
