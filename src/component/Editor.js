@@ -33,10 +33,14 @@ class Editor extends React.Component {
       isChatOpened: false,
       board: {
         name: 'Unnamed Board'
+      },
+      snapshot: {
+        link: ""
       }
     };
     this.refBoardInput = React.createRef();
     this.refChat = React.createRef();
+    this.refBoard = React.createRef();
     this.renderAccount.bind(this);
   }
 
@@ -44,24 +48,15 @@ class Editor extends React.Component {
     let json = JSON.parse(e.data);
     switch (json.action) {
       case "add-snapshot":
-        // if (this.props.match) {
-        //   // link scenario
-        // } else {
-        //   //
-        // }
-        console.log("SALAMI");
         let snapshot = json.body;
         this.props.history.push(`/b/${snapshot.link}`);
-        this.setState({chatUUID: snapshot.chatID, boardUUID: snapshot.boardID});
+        this.setState({snapshot});
         break;
     }
   }
 
   componentDidMount() {
     console.log(this.props);
-    // let {snapshot} = this.props.match.params;
-    // this.props.ws.addEventListener("message", this.onMessage.bind(this));
-    // this.props.ws.addEventListener("open",)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -69,7 +64,7 @@ class Editor extends React.Component {
       console.log("YEP, IT is");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
       let snapshot = this.props.match.params.snapshot;
-      if (snapshot){
+      if (snapshot) {
         console.log("MATCHED");
         console.log(this.props.match);
         this.takeSnapshot(snapshot);
@@ -150,7 +145,8 @@ class Editor extends React.Component {
               <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>
             </Drop>
           </Button>
-          <Button className="btn green-btn" onClick={() => this.takeSnapshot("")}>{t["invite"]}</Button>
+          <Button className="btn green-btn"
+                  onClick={() => this.takeSnapshot(this.state.snapshot.link)}>{t["invite"]}</Button>
         </div>
     );
   }
@@ -198,12 +194,13 @@ class Editor extends React.Component {
               <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
                 <Chat ref={this.refChat}
                       user={this.props.user}
-                      chatUUID={this.state.chatUUID}
+                      chatUUID={this.state.snapshot.chatID}
                       ws={this.props.ws}/>
               </Drop>
             </Button>
           </div>
-          <Board ws={this.props.ws}
+          <Board ref={this.refBoard}
+                 ws={this.props.ws}
                  board={this.state.board}
           />
         </div>

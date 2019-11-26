@@ -17,13 +17,7 @@ class Chat extends React.Component {
           time: "12:46",
           img: "",
           body: "Hi, welcome to shared board! Blah blah... blah... yep."
-        },
-        {
-          from: "B",
-          time: "12:46",
-          img: "",
-          body: "Hi..."
-        },
+        }
       ],
       user: props.user || {}
     };
@@ -33,14 +27,8 @@ class Chat extends React.Component {
   onMessage(event) {
     let json = JSON.parse(event.data);
     switch (json.action) {
-      case "remove-messages":
-
-        break;
       case "add-messages":
         this.setState({messages: this.state.messages.concat(json.messages)});
-        break;
-      case "connect":
-        this.setState({chatUUID: json.id});
         break;
     }
     console.log(event.data);
