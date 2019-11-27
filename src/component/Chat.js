@@ -85,6 +85,7 @@ class Chat extends React.Component {
       this.readChatHistory();
     }
     this.scrollToBottom();
+    this.inputRef.current.focus();
   }
 
   renderMessage(msg) {

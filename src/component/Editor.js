@@ -98,7 +98,7 @@ class Editor extends React.Component {
 
   takeSnapshot(url) {
     // if empty -> creates
-    console.log("connectiong to" + url);
+    console.log("connecting to" + url);
     try {
       this.props.ws.send(JSON.stringify(
           {
@@ -199,9 +199,10 @@ class Editor extends React.Component {
               </Drop>
             </Button>
           </div>
-          <Board ref={this.refBoard}
+          <Board user={this.props.user}
+              ref={this.refBoard}
                  ws={this.props.ws}
-                 board={this.state.board}
+                 boardUUID={this.state.snapshot.boardID}
           />
         </div>
     );

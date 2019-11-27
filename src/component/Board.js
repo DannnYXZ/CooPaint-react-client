@@ -4,13 +4,14 @@ import Canvas from "./Canvas";
 import ToolsMenu from "./ToolsMenu";
 import {post} from "../model/Net";
 import {method} from "../model/config";
-import _ from "lodash";
 
-export const TOOL = {NONE: "none", LINE: "line"};
-const FSM = {IDLE: 0, DRAW: 1};
+export const TOOL = {NONE: "NULL", LINE: "LINE"};
+const STATE_DRAW = {IDLE: 0, DRAW: 1};
+const STATE_MODE = {OFFLINE: 0, ONLINE: 1};
 
 class Board extends React.Component {
-  FSM = FSM.IDLE;
+  FSM_DRAW = STATE_DRAW.IDLE;
+  FSM_MODE = null;
   tool = TOOL.LINE;
   tmpShape = {
     type: null,
@@ -27,36 +28,39 @@ class Board extends React.Component {
       isAdmin: false,
     };
     this.boardDiv = React.createRef();
+    this.canvasRef = React.createRef();
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchMove = this.onTouchMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.refineCanvas.bind(this));
-    this.refineCanvas();
+    this.FSM_MODE = this.props.boardUUID
+        ? STATE_MODE.ONLINE
+        : STATE_MODE.OFFLINE;
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.ws && this.props.ws) {
       console.log("chat got valid ws");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
-      // this.connectToBoard(this.props.chatUUID);
+      this.send(this.state.canvas);
+      // this.pushState(this.props.boardUUID);
     }
-  }
-
-  refineCanvas() {
-    this.setState({
-      w: this.boardDiv.current.offsetWidth,
-      h: this.boardDiv.current.offsetHeight
-    });
+    this.FSM_MODE = this.props.boardUUID
+        ? STATE_MODE.ONLINE
+        : STATE_MODE.OFFLINE;
   }
 
   onMessage(event) {
-    console.log("board got message");
-    // console.log(event.data);
+    let json = JSON.parse(event.data);
+    switch (json.action) {
+      case "add-elements":
+        this.state.canvas.push.apply(this.state.canvas, json.elements);
+        this.canvasRef.current.draw(json.elements);
+        // TODO: remove duplicates from canvas
+        break;
+    }
   }
 
   create() {
@@ -80,117 +84,98 @@ class Board extends React.Component {
     }
   }
 
-  update() {
-    // PUT /boards/{id}/element
+  pushState() {
+    try {
+      this.props.ws.send(JSON.stringify(
+          {
+            method: method.GET,
+            url: `/board/${this.props.chatUUID}`
+          }
+      ));
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   delete() {
     // DELETE /boards/{id}
   }
 
-  get(boardId) {
-    // get /boards/{id}
-    post("/get-board", {id: this.state.id}, (board) => this.setState({
-      canvas: board.canvas
-    }));
-  }
-
   save() {
-    post("/save-board", {id: this.state.id}, (board) => this.setState({
-      canvas: board.canvas
+    post(`/board/${this.props.boardUUID}`, (board) => this.setState({
+      //canvas: board.canvas
     }));
   }
 
-  send(jelem) {
+  send(elements) {
     this.props.ws.send(JSON.stringify(
         {
           method: method.POST,
           url: `/board/${this.props.boardUUID}/elements`,
-          body: jelem
+          body: elements // array
         }));
-  }
-
-
-  connectToBoard(boardUUID) {
-    this.props.ws.send(JSON.stringify(
-        {
-          method: method.GET,
-          url: `/chat/${boardUUID}`
-        }
-    ));
-    this.readBoardHistory();
   }
 
   readBoardHistory() {
     this.props.ws.send(JSON.stringify(
         {
           method: method.GET,
-          url: `/board/${this.state.chatUUID}/drawings`
+          url: `/board/${this.state.chatUUID}/elements`
         }
     ));
   }
 
   onMouseDown() {
-    this.FSM = FSM.DRAW;
+    this.FSM_DRAW = STATE_DRAW.DRAW;
     switch (this.tool) {
       case TOOL.LINE:
         this.tmpShape.type = this.tool;
+        this.state.canvas.push(this.tmpShape); // then appending points to it
         break;
     }
-  }
-
-  onTouchStart(e) {
-    this.FSM = FSM.DRAW;
-    switch (this.tool) {
-      case TOOL.LINE:
-        this.tmpShape.type = this.tool;
-        break;
-    }
-    e.preventDefault();
   }
 
   onMouseMove({nativeEvent}) {
-    console.log(this.FSM);
-    switch (this.FSM) {
-      case FSM.DRAW:
+    console.log(this.FSM_DRAW);
+    switch (this.FSM_DRAW) {
+      case STATE_DRAW.DRAW:
         const {clientX, clientY} = nativeEvent;
         this.tmpShape.params.push(clientX);
         this.tmpShape.params.push(clientY);
+        this.canvasRef.current.draw([this.tmpShape]); // avoid state change
         break;
     }
-  }
-
-  onTouchMove(e) {
-    console.log(this.FSM);
-    switch (this.FSM) {
-      case FSM.DRAW:
-        this.tmpShape.params.push(e.x);
-        this.tmpShape.params.push(e.y);
-        break;
-    }
-    e.preventDefault();
   }
 
   onMouseUp() {
     console.log(this.state.canvas);
     // send shape
-    this.send(this.tmpShape);
-    this.state.canvas.push(_.cloneDeep(this.tmpShape));
-    this.tmpShape.params = [];
-    this.FSM = FSM.IDLE;
-    this.forceUpdate();
+    if (this.FSM_MODE === STATE_MODE.ONLINE) {
+      this.send([this.tmpShape]);
+    }
+    this.tmpShape = {
+      params: []
+    };
+    this.FSM_DRAW = STATE_DRAW.IDLE;
+    //this.forceUpdate();
   }
 
   render() {
     return (
-        <div className="main-board" ref={this.boardDiv} res={() => this.refineCanvas.bind(this)}
+        <div className="main-board" ref={this.boardDiv}
              onMouseDown={this.onMouseDown}
              onMouseUp={this.onMouseUp}
              onMouseMove={this.onMouseMove}
-             onTouchStart={this.onTouchStart}
-             onTouchMove={this.onTouchMove}>
+        >
           <ToolsMenu/>
-          <Canvas elements={this.state.canvas}/>
+          <Canvas ref={this.canvasRef}
+                  elements={this.state.canvas}
+                  onResize={() => {
+                    console.log(this.canvasRef.current);
+                    if (this.canvasRef.current)
+                      this.canvasRef.current.draw(this.state.canvas);
+                  }
+                  }/>
         </div>
     );
   }

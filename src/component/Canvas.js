@@ -47,7 +47,8 @@ function loadShader(gl, type, source) {
 }
 
 function clear(gl) {
-  gl.clearColor(40/255, 44/255, 52/255, 1.0);
+  console.log("CLEARED");
+  gl.clearColor(40 / 255, 44 / 255, 52 / 255, 1.0);
   gl.clearDepth(1.0);
   gl.lineWidth(3);
   gl.enable(gl.DEPTH_TEST);
@@ -78,14 +79,11 @@ function init(gl) {
 }
 
 function drawLine(gl, params, BAO) {
-  //params = [-.5, 0, 7000, 7000];
-  //params = [0., .0, 80.5, 80.5];
   gl.bindBuffer(gl.ARRAY_BUFFER, BAO);
   gl.bufferData(gl.ARRAY_BUFFER,
       new Float32Array(params),
       gl.STATIC_DRAW);
   console.log("DRAWLINE");
-  console.log(params.length / 2);
   console.log(params);
   gl.drawArrays(gl.LINE_STRIP, 0, params.length / 2);
 }
@@ -100,15 +98,13 @@ class Canvas extends React.Component {
   componentDidMount() {
     // init
     window.addEventListener("resize", this.resizeCanvas.bind(this));
-    this.gl = this.canvasRef.current.getContext("webgl");
+    this.gl = this.canvasRef.current.getContext("webgl", {preserveDrawingBuffer: true});
     let gl = this.gl;
     if (gl === null) {
       alert("Unable to initialize WebGL. Your browser or machine may not support it.");
     }
     this.programInfo = init(gl);
     this.resizeCanvas();
-    this.projM = mat4.create();
-    mat4.ortho(this.projM, 0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
     // mat4.perspective(this.projM,
     //     100 * Math.PI / 180,
     //     gl.canvas.width / gl.canvas.height,
@@ -116,16 +112,13 @@ class Canvas extends React.Component {
     //     100.0);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    // drawing shapes here
+  draw(elements) {
     let gl = this.gl;
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    clear(gl);
     gl.useProgram(this.programInfo.program);
     console.log("PROJ");
     console.log(this.projM);
     gl.uniformMatrix4fv(this.programInfo.uniformLocations.projectionMatrix, false, this.projM);
-    for (let shape of this.props.elements) {
+    for (let shape of elements) {
       console.log(shape);
       switch (shape.type) {
         case TOOL.LINE:
@@ -141,11 +134,17 @@ class Canvas extends React.Component {
     let displayHeight = canvas.clientHeight;
     canvas.width = displayWidth;
     canvas.height = displayHeight;
+    let gl = this.gl;
+    clear(gl);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    this.projM = mat4.create();
+    mat4.ortho(this.projM, 0, canvas.width, canvas.height, 0, -1, 1);
+    console.log("RESIZED");
+    this.props.onResize();
   }
 
   render() {
     return (
-        //<canvas ref={this.canvasRef} width={1000} height={1000} style={{width: "100%", height: "100%"}}/>
         <canvas ref={this.canvasRef} style={{width: "100%", height: "100%", display: "block"}}/>
     );
   }
