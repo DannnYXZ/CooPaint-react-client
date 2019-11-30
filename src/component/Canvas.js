@@ -97,14 +97,14 @@ class Canvas extends React.Component {
 
   componentDidMount() {
     // init
-    window.addEventListener("resize", this.resizeCanvas.bind(this));
+    window.addEventListener("resize", this.resize.bind(this));
     this.gl = this.canvasRef.current.getContext("webgl", {preserveDrawingBuffer: true});
     let gl = this.gl;
     if (gl === null) {
       alert("Unable to initialize WebGL. Your browser or machine may not support it.");
     }
     this.programInfo = init(gl);
-    this.resizeCanvas();
+    this.resize();
     // mat4.perspective(this.projM,
     //     100 * Math.PI / 180,
     //     gl.canvas.width / gl.canvas.height,
@@ -128,7 +128,7 @@ class Canvas extends React.Component {
     }
   }
 
-  resizeCanvas() {
+  resize() {
     let canvas = this.canvasRef.current;
     let displayWidth = canvas.clientWidth;
     let displayHeight = canvas.clientHeight;

@@ -1,7 +1,7 @@
 import React from "react";
 import "./ParticipantsManager.css"
 import ModalWidget from "./ModalWidget";
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import ToggleButton from "./ToggleButton";
 import Logo from "./Logo";
 import i18nContext from "../model/i18nContext";
@@ -32,7 +32,7 @@ class ParticipantsManagerWidget extends React.Component {
   }
 
   handleOnSubmit(e) {
-    post("/api/sign-in", {
+    request("/api/sign-in", {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     }, this.onSignedIn.bind(this), (error) => this.setState({error: error.message}));

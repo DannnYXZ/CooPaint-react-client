@@ -13,7 +13,7 @@ class BoardCover extends React.Component {
   render() {
     return (
         <div className="board-cover">
-          <div className="board-img">
+          <div className="board-img" onClick={this.props.onClick}>
             <img src={this.props.img}/>
           </div>
           <div className="board-info">
@@ -22,7 +22,7 @@ class BoardCover extends React.Component {
                     onClick={() => this.setState({isOptionsOpened: !this.state.isOptionsOpened})}>
               <img className="btn-img" src="dots.svg"/>
               <Drop isOpened={this.state.isOptionsOpened} style={{right: 4}}>
-                <Button>Delete</Button>
+                {[<Button onClick={this.props.onDelete}>Delete</Button>]}
               </Drop>
             </Button>
           </div>

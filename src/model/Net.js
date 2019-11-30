@@ -1,9 +1,10 @@
-const appName="/coopaint";
-export function post(url, object, ok_callback, fail_callback) {
+const appName = "/coopaint";
+
+export function request(method, url, object, ok_callback, fail_callback) {
   fetch(appName + url, {
-        method: 'POST',
+        method: method,
         credentials: 'include',
-        body: JSON.stringify(object),
+        body: object ? JSON.stringify(object) : null,
         mimeType: 'application/json',
         headers: {
           'Accept': 'application/json; charset=UTF-8',
@@ -23,9 +24,9 @@ export function post(url, object, ok_callback, fail_callback) {
   });
 }
 
-export async function post_async(url, object, ok_callback, fail_callback) {
+export async function post_async(method, url, object, ok_callback, fail_callback) {
   const response = await fetch(appName + url, {
-        method: 'POST',
+        method: method,
         credentials: 'include',
         body: JSON.stringify(object),
         mimeType: 'application/json',
@@ -38,7 +39,7 @@ export async function post_async(url, object, ok_callback, fail_callback) {
   const text = await response.text();
   let json = text ? JSON.parse(text) : {};
   if (response.ok) {
-    // console.log("this in post", this);
+    // console.log("this in request", this);
     if (ok_callback) ok_callback(json);
   } else {
     if (fail_callback) fail_callback(json);

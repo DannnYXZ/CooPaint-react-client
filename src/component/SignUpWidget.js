@@ -1,6 +1,6 @@
 import React from "react";
 import "./Main.css"
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
@@ -38,7 +38,7 @@ class SignUpWidget extends React.Component {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     };
-    post("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
+    request("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
   }
 
   render() {

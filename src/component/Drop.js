@@ -6,9 +6,7 @@ class Drop extends React.Component {
     return (
         <ul className={this.props.className || "drop"}
             style={{display: this.props.isOpened ? "" : "none", ...this.props.style}}>
-          {Array.isArray(this.props.children)
-              ? this.props.children.map((e, i) => <li key={i}>{e}</li>)
-              : <li>{this.props.children}</li>}
+          {this.props.children.map((e, i) => <li key={i}>{e}</li>)}
         </ul>
     );
   }

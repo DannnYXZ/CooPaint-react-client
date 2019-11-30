@@ -1,11 +1,12 @@
 import React from "react";
 import Button from "./Button";
 import i18nContext from "../model/i18nContext";
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import Icon from "./Icon";
 import TextInput from "./TextInput";
 import "./Main.css"
 import TabsBrowser from "./TabsBrowser";
+import {method} from "../model/config";
 
 class AccountEditor extends React.Component {
   static contextType = i18nContext;
@@ -36,11 +37,11 @@ class AccountEditor extends React.Component {
       return;
     let selectedFile = e.target.files[0];
     // TODO: cleanup
-    post('/set-avatar', {}, (res) => {
+    request(method.POST, '/set-avatar', {}, (res) => {
       const formData = new FormData();
       formData.append('file', selectedFile);
       fetch('/coopaint/upload-file', {
-        method: 'post',
+        method: 'POST',
         body: formData
       }).then(res => {
         if (res.ok) {
@@ -60,7 +61,7 @@ class AccountEditor extends React.Component {
   }
 
   submit() {
-    post("/coopaint/users", this.state.user);
+    request(method.POST, "/coopaint/users", this.state.user);
   }
 
   render() {

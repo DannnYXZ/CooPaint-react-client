@@ -3,9 +3,10 @@ import './Main.css'
 import Button from "./Button";
 import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import Error from "./Error";
 import i18nContext from "../model/i18nContext";
+import {method} from "../model/config";
 
 class SignInWidget extends React.Component {
   static contextType = i18nContext;
@@ -31,7 +32,7 @@ class SignInWidget extends React.Component {
   }
 
   handleOnSubmit(e) {
-    post("/sign-in", {
+    request(method.POST, "/sign-in", {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     }, this.onSignedIn.bind(this), (error) => this.setState({error: error.body}));

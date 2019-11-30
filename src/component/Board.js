@@ -2,7 +2,7 @@ import React from "react";
 import './Board.css'
 import Canvas from "./Canvas";
 import ToolsMenu from "./ToolsMenu";
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import {method} from "../model/config";
 
 export const TOOL = {NONE: "NULL", LINE: "LINE"};
@@ -17,6 +17,7 @@ class Board extends React.Component {
     type: null,
     params: []
   };
+  pushedState = false;
 
   constructor(props) {
     super(props);
@@ -34,28 +35,35 @@ class Board extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
   }
 
-  componentDidMount() {
+  switchBoardMode(){
     this.FSM_MODE = this.props.boardUUID
         ? STATE_MODE.ONLINE
         : STATE_MODE.OFFLINE;
   }
 
+  componentDidMount() {
+    this.switchBoardMode();
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.ws && this.props.ws) {
-      console.log("chat got valid ws");
+      console.log("board got valid ws");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
-      this.send(this.state.canvas);
-      // this.pushState(this.props.boardUUID);
     }
-    this.FSM_MODE = this.props.boardUUID
-        ? STATE_MODE.ONLINE
-        : STATE_MODE.OFFLINE;
+    if (this.props.boardUUID !== prevProps.boardUUID && this.props.boardUUID) {
+      this.readBoardHistory();
+    }
+    this.switchBoardMode();
   }
 
   onMessage(event) {
     let json = JSON.parse(event.data);
     switch (json.action) {
       case "add-elements":
+        if (!this.pushedState) {
+          this.send(this.state.canvas);
+          this.pushedState = true;
+        }
         this.state.canvas.push.apply(this.state.canvas, json.elements);
         this.canvasRef.current.draw(json.elements);
         // TODO: remove duplicates from canvas
@@ -64,8 +72,8 @@ class Board extends React.Component {
   }
 
   create() {
-    // POST /boards
-    post("/boards", {}, (board) => this.setState({
+    // POST /snapshots
+    request("/snapshots", {}, (board) => this.setState({
       //canvas: board.canvas
     }));
     // target="_blank"
@@ -84,25 +92,12 @@ class Board extends React.Component {
     }
   }
 
-  pushState() {
-    try {
-      this.props.ws.send(JSON.stringify(
-          {
-            method: method.GET,
-            url: `/board/${this.props.chatUUID}`
-          }
-      ));
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   delete() {
-    // DELETE /boards/{id}
+    // DELETE /snapshots/{id}
   }
 
   save() {
-    post(`/board/${this.props.boardUUID}`, (board) => this.setState({
+    request(`/board/${this.props.boardUUID}`, (board) => this.setState({
       //canvas: board.canvas
     }));
   }
@@ -117,10 +112,12 @@ class Board extends React.Component {
   }
 
   readBoardHistory() {
+    this.state.canvas = [];
+    this.canvasRef.current.resize();
     this.props.ws.send(JSON.stringify(
         {
           method: method.GET,
-          url: `/board/${this.state.chatUUID}/elements`
+          url: `/board/${this.props.boardUUID}/elements`
         }
     ));
   }

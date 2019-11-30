@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import {post, post_async} from "./model/Net";
+import {request, post_async} from "./model/Net";
 import i18nContext from "./model/i18nContext.js"
 import {HashRouter, Route, Switch} from "react-router-dom";
 import AccountEditor from "./component/AccountEditor";
 import Editor from "./component/Editor";
 import LangSwitcher from "./component/LangSwitcher";
+import {method} from "./model/config";
 
 function L(text) {
   console.log(text);
@@ -21,32 +22,24 @@ class App extends React.Component {
       isLangSelectorOpened: false,
       ws: null
     };
-
-    //this.socket.onopen = () => this.connectToChat(this.state.chatUUID);
-    //this.socket.onmessage = this.onMessage.bind(this);
-
-    //this.socket.addEventListener('open', () => console.log("AAAAAAAAAAAAAAAAAAAAA"));
-    //this.socket.addEventListener('open', () => console.log("BBBBBBBBBBBBBBBBBBBBB"));
   }
 
   async componentDidMount() {
-    await post_async("/auth", {}, user => this.acceptUserData(user));
+    await post_async(method.POST, "/auth", null, user => this.acceptUserData(user));
     this.loadLangPack(this.state.user.lang);
 
     let ws = new WebSocket(`ws://${window.location.host}/coopaint/ws`);
     ws.onopen = () => this.setState({ws: ws});
-    //this.socket.addEventListener('open', () => console.log("AAAAAAAAAAAAAAAAAAAAA"));
-    //this.socket.addEventListener('open', () => console.log("BBBBBBBBBBBBBBBBBBBBB"));
   }
 
   signOut() {
-    post("/sign-out", {}, () => {
+    request(method.POST, "/sign-out", {}, () => {
       this.setState({user: {}})
     });
   }
 
   loadLangPack(lang) {
-    post("/lang-pack", {lang: lang},
+    request(method.GET, `/lang-pack/${lang}`, null,
         (locale) => {
           Object.assign(this.state.translation, locale);
           this.setState({isLangSelectorOpened: false});
@@ -76,7 +69,7 @@ class App extends React.Component {
   }
 
   onCreate() {
-    post("/save-board", {})
+    request(method.POST, "/save-board", {})
   }
 
   onManage() {

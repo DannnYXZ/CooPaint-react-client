@@ -7,11 +7,11 @@ import SignInWidget from "./SignInWidget";
 import AccountButton from "./AccountButton";
 import SignUpWidget from "./SignUpWidget";
 import Button from "./Button";
-import {post} from "../model/Net";
+import {request} from "../model/Net";
 import Drop from "./Drop";
 import TextInput from "./TextInput";
 import ParticipantsManagerWidget from "./ParticipantsManagerWidget";
-import BoardBrowserWidget from "./BoardBrowserWidget";
+import BoardManagerWidget from "./BoardManagerWidget";
 import Chat from "./Chat";
 import i18nContext from "../model/i18nContext.js"
 import {method} from "../model/config";
@@ -35,7 +35,9 @@ class Editor extends React.Component {
         name: 'Unnamed Board'
       },
       snapshot: {
-        link: ""
+        link: "",
+        chat: {},
+        board: {}
       }
     };
     this.refBoardInput = React.createRef();
@@ -44,13 +46,17 @@ class Editor extends React.Component {
     this.renderAccount.bind(this);
   }
 
+  installSnapshot(snapshot) {
+    this.props.history.push(`/b/${snapshot.link}`);
+    this.setState({snapshot});
+  }
+
   onMessage(e) {
     let json = JSON.parse(e.data);
     switch (json.action) {
       case "add-snapshot":
         let snapshot = json.body;
-        this.props.history.push(`/b/${snapshot.link}`);
-        this.setState({snapshot});
+        this.installSnapshot(snapshot);
         break;
     }
   }
@@ -65,8 +71,6 @@ class Editor extends React.Component {
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
       let snapshot = this.props.match.params.snapshot;
       if (snapshot) {
-        console.log("MATCHED");
-        console.log(this.props.match);
         this.takeSnapshot(snapshot);
       }
     }
@@ -89,7 +93,7 @@ class Editor extends React.Component {
   }
 
   onCreate() {
-    post("/save-board", {});
+    request("/save-board", {});
   }
 
   onManage() {
@@ -177,7 +181,10 @@ class Editor extends React.Component {
                           }}/>
             <ParticipantsManagerWidget isOpened={this.state.isParticipantsManagerOpened}
                                        onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
-            <BoardBrowserWidget isOpened={this.state.isBoardBrowserOpened}
+            <BoardManagerWidget isOpened={this.state.isBoardBrowserOpened}
+                                onOpen={(snapshot) => {
+                                  this.installSnapshot(snapshot);
+                                }}
                                 onClose={() => this.setState({isBoardBrowserOpened: false})}/>
           </WidgetsWrapper>
 
@@ -192,17 +199,17 @@ class Editor extends React.Component {
                     onClick={() => this.setState({isChatOpened: !this.state.isChatOpened})}>
               <img src="chat.svg" style={{width: "60%", height: "auto"}}/>
               <Drop isOpened={this.state.isChatOpened} style={{bottom: 60, right: 2}}>
-                <Chat ref={this.refChat}
-                      user={this.props.user}
-                      chatUUID={this.state.snapshot.chatID}
-                      ws={this.props.ws}/>
+                {[<Chat ref={this.refChat}
+                        user={this.props.user}
+                        chatUUID={this.state.snapshot.chat.uuid}
+                        ws={this.props.ws}/>]}
               </Drop>
             </Button>
           </div>
           <Board user={this.props.user}
-              ref={this.refBoard}
+                 ref={this.refBoard}
                  ws={this.props.ws}
-                 boardUUID={this.state.snapshot.boardID}
+                 boardUUID={this.state.snapshot.board.uuid}
           />
         </div>
     );
