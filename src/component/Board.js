@@ -55,12 +55,6 @@ class Board extends React.Component {
     // DELETE /snapshots/{id}
   }
 
-  save() {
-    request(`/board/${this.props.boardUUID}`, (board) => this.setState({
-      //canvas: board.canvas
-    }));
-  }
-
   send(elements) {
     this.props.ws.send(JSON.stringify(
         {
@@ -79,6 +73,15 @@ class Board extends React.Component {
           url: `/board/${uuid}/elements`
         }
     ));
+  }
+
+  save(uuid) {
+    this.props.ws.send(JSON.stringify(
+        {
+          method: method.POST,
+          url: `/board/${uuid}/elements`,
+          body: this.state.canvas
+        }));
   }
 
   onMouseDown() {

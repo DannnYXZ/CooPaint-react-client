@@ -17,7 +17,7 @@ import {method} from "../model/config";
 import {withRouter} from "react-router-dom";
 
 
-export const BOARD_MODE = {OFFLINE: 0, ONLINE: 1, CREATE_NEW: 2};
+export const BOARD_MODE = {OFFLINE: 0, ONLINE: 1, CREATE_NEW: 2, INVITE: 3};
 
 class Editor extends React.Component {
   static contextType = i18nContext;
@@ -87,11 +87,18 @@ class Editor extends React.Component {
         switch (this.state.boardMode) {
           case BOARD_MODE.CREATE_NEW:
             window.open(`#/b/${snapshot.link}`, "_blank");
+            // this.setState({boardMode: }); previous
             break;
           case BOARD_MODE.ONLINE:
             this.refBoard.current.readBoard(snapshot.board.uuid);
             console.log("INSTALLED SNAPSHOT");
             this.setState({snapshot});
+            break;
+          case BOARD_MODE.INVITE:
+            this.refBoard.current.save(snapshot.board.uuid);
+            console.log("INSTALLED SNAPSHOT");
+            this.setState({boardMode: BOARD_MODE.ONLINE});
+            this.onOpenBoard(snapshot);
             break;
         }
         break;
@@ -118,6 +125,12 @@ class Editor extends React.Component {
     this.setState({boardMode: BOARD_MODE.CREATE_NEW});
     this.getSnapshot("");
   }
+
+  onInvite() {
+    this.setState({boardMode: BOARD_MODE.INVITE});
+    this.getSnapshot("");
+  }
+
 
   onManage() {
     this.setState({isParticipantsManagerOpened: true});
@@ -173,7 +186,7 @@ class Editor extends React.Component {
             </Drop>
           </Button>
           <Button className="btn green-btn"
-                  onClick={() => this.getSnapshot(this.state.snapshot.link)}>{t["invite"]}</Button>
+                  onClick={() => this.onInvite()}>{t["invite"]}</Button>
         </div>
     );
   }
