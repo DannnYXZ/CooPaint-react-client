@@ -82,7 +82,7 @@ class BoardManagerWidget extends React.Component {
   render() {
     let t = this.context;
     return (
-        <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose} style={{maxHeight: "98%"}}>
+        <ModalWidget isOpened={this.props.isOpened} onClose={this.props.onClose} style={{maxHeight: "98%", maxWidth: "60%"}}>
           <div className="browser-tabs">
             <Tabs activeTab={this.state.activeTab}>
               {[<Button className="btn" onClick={this.onMyBoards.bind(this)}>{t["boards.my"]}</Button>]}

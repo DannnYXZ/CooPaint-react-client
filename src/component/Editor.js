@@ -7,7 +7,6 @@ import SignInWidget from "./SignInWidget";
 import AccountButton from "./AccountButton";
 import SignUpWidget from "./SignUpWidget";
 import Button from "./Button";
-import {request} from "../model/Net";
 import Drop from "./Drop";
 import TextInput from "./TextInput";
 import ParticipantsManagerWidget from "./ParticipantsManagerWidget";
@@ -16,6 +15,9 @@ import Chat from "./Chat";
 import i18nContext from "../model/i18nContext.js"
 import {method} from "../model/config";
 import {withRouter} from "react-router-dom";
+
+
+export const BOARD_MODE = {OFFLINE: 0, ONLINE: 1, CREATE_NEW: 2};
 
 class Editor extends React.Component {
   static contextType = i18nContext;
@@ -46,9 +48,35 @@ class Editor extends React.Component {
     this.renderAccount.bind(this);
   }
 
-  installSnapshot(snapshot) {
+  componentDidMount() {
+    this.checkBoardMode();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevProps.ws && this.props.ws) {
+      console.log("YEP, IT is");
+      this.props.ws.addEventListener("message", this.onMessage.bind(this));
+      this.checkBoardMode();
+    }
+    if (prevProps.match.params !== this.props.match.params) {
+      this.checkBoardMode();
+    }
+  }
+
+  checkBoardMode() {
+    console.log("checking board state");
+    console.log(this.props.match.params);
+    let snapshotLink = this.props.match.params.snapshot;
+    if (snapshotLink) {
+      this.setState({boardMode: BOARD_MODE.ONLINE});
+      this.getSnapshot(snapshotLink);
+    } else {
+      this.setState({boardMode: BOARD_MODE.OFFLINE});
+    }
+  }
+
+  onOpenBoard(snapshot) {
     this.props.history.push(`/b/${snapshot.link}`);
-    this.setState({snapshot});
   }
 
   onMessage(e) {
@@ -56,23 +84,17 @@ class Editor extends React.Component {
     switch (json.action) {
       case "add-snapshot":
         let snapshot = json.body;
-        this.installSnapshot(snapshot);
+        switch (this.state.boardMode) {
+          case BOARD_MODE.CREATE_NEW:
+            window.open(`#/b/${snapshot.link}`, "_blank");
+            break;
+          case BOARD_MODE.ONLINE:
+            this.refBoard.current.readBoard(snapshot.board.uuid);
+            console.log("INSTALLED SNAPSHOT");
+            this.setState({snapshot});
+            break;
+        }
         break;
-    }
-  }
-
-  componentDidMount() {
-    console.log(this.props);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevProps.ws && this.props.ws) {
-      console.log("YEP, IT is");
-      this.props.ws.addEventListener("message", this.onMessage.bind(this));
-      let snapshot = this.props.match.params.snapshot;
-      if (snapshot) {
-        this.takeSnapshot(snapshot);
-      }
     }
   }
 
@@ -93,16 +115,17 @@ class Editor extends React.Component {
   }
 
   onCreate() {
-    request("/save-board", {});
+    this.setState({boardMode: BOARD_MODE.CREATE_NEW});
+    this.getSnapshot("");
   }
 
   onManage() {
     this.setState({isParticipantsManagerOpened: true});
   }
 
-  takeSnapshot(url) {
+  getSnapshot(url) {
     // if empty -> creates
-    console.log("connecting to" + url);
+    console.log("editor connects to" + url);
     try {
       this.props.ws.send(JSON.stringify(
           {
@@ -150,7 +173,7 @@ class Editor extends React.Component {
             </Drop>
           </Button>
           <Button className="btn green-btn"
-                  onClick={() => this.takeSnapshot(this.state.snapshot.link)}>{t["invite"]}</Button>
+                  onClick={() => this.getSnapshot(this.state.snapshot.link)}>{t["invite"]}</Button>
         </div>
     );
   }
@@ -183,7 +206,7 @@ class Editor extends React.Component {
                                        onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
             <BoardManagerWidget isOpened={this.state.isBoardBrowserOpened}
                                 onOpen={(snapshot) => {
-                                  this.installSnapshot(snapshot);
+                                  this.onOpenBoard(snapshot);
                                 }}
                                 onClose={() => this.setState({isBoardBrowserOpened: false})}/>
           </WidgetsWrapper>
@@ -208,6 +231,7 @@ class Editor extends React.Component {
           </div>
           <Board user={this.props.user}
                  ref={this.refBoard}
+                 mode={this.state.boardMode}
                  ws={this.props.ws}
                  boardUUID={this.state.snapshot.board.uuid}
           />

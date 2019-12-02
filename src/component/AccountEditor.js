@@ -46,7 +46,6 @@ class AccountEditor extends React.Component {
       }).then(res => {
         if (res.ok) {
           console.log(res.data);
-          alert("File uploaded successfully.");
           return res.json();
         }
       }).then(json => {

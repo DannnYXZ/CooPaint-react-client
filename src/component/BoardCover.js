@@ -22,7 +22,10 @@ class BoardCover extends React.Component {
                     onClick={() => this.setState({isOptionsOpened: !this.state.isOptionsOpened})}>
               <img className="btn-img" src="dots.svg"/>
               <Drop isOpened={this.state.isOptionsOpened} style={{right: 4}}>
-                {[<Button onClick={this.props.onDelete}>Delete</Button>]}
+                {[<Button onClick={() => {
+                  this.props.onDelete();
+                  this.setState({isOptionsOpened: false})
+                }}>Delete</Button>]}
               </Drop>
             </Button>
           </div>

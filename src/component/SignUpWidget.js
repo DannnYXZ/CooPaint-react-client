@@ -6,6 +6,7 @@ import TextInput from "./TextInput";
 import ModalWidget from "./ModalWidget";
 import Error from "./Error";
 import i18nContext from "../model/i18nContext";
+import {method} from "../model/config";
 
 class SignUpWidget extends React.Component {
   static contextType = i18nContext;
@@ -38,18 +39,18 @@ class SignUpWidget extends React.Component {
       email: this.refEmail.current.value,
       password: this.refPassword.current.value
     };
-    request("/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
+    request(method.POST, "/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
   }
 
   render() {
     let t = this.context;
     return (
         <ModalWidget isOpened={this.props.isOpened}
-                    style={{minWidth: 408}}
+                     style={{minWidth: 408}}
                      onClose={() => {
-          this.props.onClose();
-          this.clearWidget();
-        }}>
+                       this.props.onClose();
+                       this.clearWidget();
+                     }}>
           <h1>{t["sign.up"]}</h1>
           <form>
             <Error>{t[this.state.error]}</Error>
