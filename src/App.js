@@ -50,6 +50,7 @@ class App extends React.Component {
     this.setState({
       user: user
     });
+    this.loadLangPack(user.lang);
   }
 
   onJoin(boardName) {
@@ -100,7 +101,6 @@ class App extends React.Component {
           <HashRouter>
             <div className="app">
               <Switch>
-
                 <Route exact path="/">
                   {this.renderEditor()}
                   {this.renderLangSwitcher()}

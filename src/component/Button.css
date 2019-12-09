@@ -77,3 +77,6 @@
     display: block;
     cursor: pointer;
 }
+.clear-ib {
+    border: none;
+}

@@ -16,7 +16,7 @@ class AccountButton extends React.Component {
           <span style={{margin: "0 8px"}}>{this.props.user.name}</span>
           <img src="dropdown.svg"/>
           <Drop isOpened={this.props.isOpened} style={{top: 50}}>
-            <Link to="/account">
+            <Link to="/account" style={{color: "transparent", listStyleType: "none", textAlign: "center"}}>
               <Button className="btn trans-btn">{t["account"]}</Button>
             </Link>
             <Button className="btn trans-btn" onClick={this.props.onSignOut}>{t["sign.out"]}</Button>

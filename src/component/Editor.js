@@ -52,13 +52,17 @@ class Editor extends React.Component {
     this.checkBoardMode();
   }
 
+  componentWillUnmount() {
+    console.log("EDITOR UNMOUNTED");
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.ws && this.props.ws) {
       console.log("YEP, IT is");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
       this.checkBoardMode();
     }
-    if (prevProps.match.params !== this.props.match.params) {
+    if (prevProps.match.params !== this.props.match.params && this.props.ws) {
       this.checkBoardMode();
     }
   }
@@ -179,7 +183,6 @@ class Editor extends React.Component {
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
-              <Button className="btn trans-btn" onClick={this.onDelete.bind(this)}>{t["delete"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>{t["create.new.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>

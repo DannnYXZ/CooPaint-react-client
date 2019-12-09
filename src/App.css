@@ -71,3 +71,9 @@ ul {
     flex-wrap: wrap;
     z-index: 1000;
 }
+
+button, input[type="submit"], input[type="reset"] {
+    border: none;
+    cursor: pointer;
+    font: inherit;
+}

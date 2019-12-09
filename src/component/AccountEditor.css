@@ -1,6 +1,10 @@
 .account-editor:hover {
     cursor: pointer;
 }
-.account-editor {
-    background-color: #666666;
+
+.account-editor-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }

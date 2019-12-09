@@ -18,6 +18,11 @@ class SignInWidget extends React.Component {
     };
     this.refEmail = React.createRef();
     this.refPassword = React.createRef();
+    this.refSubmit = React.createRef();
+  }
+
+  componentDidUpdate() {
+    this.refEmail.current.focus();
   }
 
   clearWidget() {
@@ -32,10 +37,16 @@ class SignInWidget extends React.Component {
   }
 
   handleOnSubmit(e) {
-    request(method.POST, "/sign-in", {
-      email: this.refEmail.current.value,
-      password: this.refPassword.current.value
-    }, this.onSignedIn.bind(this), (error) => this.setState({error: error.body}));
+    if (this.refEmail.current.checkValidity() && this.refPassword.current.checkValidity()) {
+      e.preventDefault();
+      request(method.POST, "/sign-in", {
+        email: this.refEmail.current.value,
+        password: this.refPassword.current.value
+      }, this.onSignedIn.bind(this), (error) => {
+        this.setState({error: error.body});
+        this.refEmail.current.value = '';
+      });
+    }
     return false;
   }
 
@@ -47,26 +58,32 @@ class SignInWidget extends React.Component {
           this.props.onClose();
         }}>
           <h1>{t["sign.in"]}</h1>
-          <form>
+          <form lang="fr">
             <Error>{t[this.state.error]}</Error>
             <TextInput type="email"
                        placeholder={t["your.email"]}
                        className="van-input mb1"
                        rref={this.refEmail}
-                       onEnter={this.handleOnSubmit.bind(this)}/>
+                       minLength={3}
+                       maxLength={255}
+                       onEnter={() => this.refSubmit.current.click()}
+                       required/>
             <TextInput type="password"
                        placeholder={t["enter.password"]}
                        className="van-input mb1"
                        rref={this.refPassword}
-                       onEnter={this.handleOnSubmit.bind(this)}/>
+                       onEnter={document.get}
+                       minLength={3}
+                       maxLength={4096}
+                       required/>
             <div className="hr-section">
               <a href="/restore-password">
                 <b>{t["forgot.password?"]}</b>
               </a>
-              <Button className="btn green-btn" onClick={this.handleOnSubmit.bind(this)}
-                      style={{textTransform: "uppercase"}}>
-                {t["sign.in"]}
-              </Button>
+              <input ref={this.refSubmit} type="submit" className="clear-ib btn green-btn"
+                     style={{display: "block", textTransform: "uppercase", fontWeight: 700}}
+                     value={t["sign.in"]}
+                     onClick={this.handleOnSubmit.bind(this)}/>
             </div>
             <hr/>
             <p className="paragraph h4">{t["dont.have.an.account?"]}&nbsp;

@@ -20,6 +20,7 @@ class SignUpWidget extends React.Component {
     };
     this.refEmail = React.createRef();
     this.refPassword = React.createRef();
+    this.refSubmit = React.createRef();
   }
 
   clearWidget() {
@@ -34,12 +35,18 @@ class SignUpWidget extends React.Component {
     this.setState({error: ''});
   }
 
-  handleOnSignUpClick() {
-    let user = {
-      email: this.refEmail.current.value,
-      password: this.refPassword.current.value
-    };
-    request(method.POST, "/sign-up", user, (user) => this.onSignedUp(user), (error) => this.setState({error: error.body}));
+  handleOnSubmit(e) {
+    if (this.refEmail.current.checkValidity() && this.refPassword.current.checkValidity()) {
+      e.preventDefault();
+      request(method.POST, "/sign-up", {
+        email: this.refEmail.current.value,
+        password: this.refPassword.current.value
+      }, this.onSignedUp.bind(this), (error) => {
+        this.setState({error: error.body});
+        this.refEmail.current.value = '';
+      });
+    }
+    return false;
   }
 
   render() {
@@ -58,17 +65,23 @@ class SignUpWidget extends React.Component {
                        placeholder={t["your.email"]}
                        className="van-input mb1"
                        rref={this.refEmail}
-                       onEnter={this.handleOnSignUpClick.bind(this)}/>
+                       minLength={3}
+                       maxLength={255}
+                       onEnter={() => this.refSubmit.current.click()}
+                       required/>
             <TextInput type="password"
                        placeholder={t["enter.password"]}
                        className="van-input mb1"
                        rref={this.refPassword}
-                       onEnter={this.handleOnSignUpClick.bind(this)}/>
+                       onEnter={document.get}
+                       minLength={3}
+                       maxLength={4096}
+                       required/>
             <div className="hr-section fdrr">
-              <Button className="btn green-btn" onClick={this.handleOnSignUpClick.bind(this)}
-                      style={{textTransform: "uppercase"}}>
-                {t["sign.up"]}
-              </Button>
+              <input ref={this.refSubmit} type="submit" className="clear-ib btn green-btn"
+                     style={{display: "block", textTransform: "uppercase", fontWeight: 700}}
+                     value={t["sign.in"]}
+                     onClick={this.handleOnSubmit.bind(this)}/>
             </div>
             <hr/>
             <p className="paragraph h4">{t["got.an.account?"]}&nbsp;

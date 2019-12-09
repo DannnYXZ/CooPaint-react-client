@@ -5,15 +5,14 @@ class TextInput extends React.Component {
   handleKeyUp(e) {
     if (e.keyCode === 13 && this.props.onEnter != null) this.props.onEnter();
   }
-
+//
+//className="van-input mb1"
   render() {
     return (
         <input ref={this.props.rref}
-               style={{...this.props.style}}
-               type={this.props.type || "text"}
-               autoComplete="on"
-               placeholder={this.props.placeholder}
+               {...this.props}
                className={this.props.className || "van-input"}
+               autoComplete="on"
                onKeyUp={this.handleKeyUp.bind(this)}
                onClick={(e) => e.stopPropagation()}
                onChange={this.props.onChange}/>
