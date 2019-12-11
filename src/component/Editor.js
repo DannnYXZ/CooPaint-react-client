@@ -166,7 +166,8 @@ class Editor extends React.Component {
   renderAccount() {
     let t = this.context;
     return this.props.user.isAuth
-        ? <AccountButton user={this.props.user} onSignOut={() => this.props.signOut()}
+        ? <AccountButton user={this.props.user}
+                         onSignOut={() => this.props.signOut()}
                          isOpened={this.state.isAccountButtonOpened}
                          onClick={() => this.setState({isAccountButtonOpened: !this.state.isAccountButtonOpened})}/>
         : <Button href="#" className="btn van-btn" onClick={() => this.setState({isSignInWidgetOpened: true})}>
@@ -174,12 +175,23 @@ class Editor extends React.Component {
         </Button>;
   }
 
+  acceptedBoard(board) {
+    this.refBoardInput.current.value = board.name;
+  }
+
+  updateBoardName() {
+    this.refBoard.current.updateName(this.refBoardInput.current.value);
+  }
+
   renderManager() {
     let t = this.context;
     return (
         <div className="toolbar-tl">
           <Button onClick={() => this.setState({isMainMenuOpened: !this.state.isMainMenuOpened})}>
-            <TextInput rref={this.refBoardInput} placeholder={this.state.board.name} className="trans-input"/>
+            <TextInput rref={this.refBoardInput}
+                       placeholder={this.state.board.name}
+                       className="trans-input"
+                       onLoseFocus={this.updateBoardName.bind(this)}/>
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
@@ -250,6 +262,7 @@ class Editor extends React.Component {
                  mode={this.state.boardMode}
                  ws={this.props.ws}
                  boardUUID={this.state.snapshot.board.uuid}
+                 acceptedBoard={this.acceptedBoard.bind(this)}
           />
         </div>
     );

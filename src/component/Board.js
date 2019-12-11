@@ -2,7 +2,6 @@ import React from "react";
 import './Board.css'
 import Canvas from "./Canvas";
 import ToolsMenu from "./ToolsMenu";
-import {request} from "../model/Net";
 import {method} from "../model/config";
 import {BOARD_MODE} from "./Editor";
 
@@ -48,11 +47,30 @@ class Board extends React.Component {
         this.canvasRef.current.draw(json.elements);
         // TODO: remove duplicates from canvas
         break;
+      case "read-board":
+        this.props.acceptedBoard(json.board);
+        this.state.canvas.push.apply(this.state.canvas, json.board.elements);
+        this.canvasRef.current.draw(json.board.elements);
+        break;
+      case "update-board":
+        this.props.acceptedBoard(json.board);
+        break;
     }
   }
 
   delete() {
     // DELETE /snapshots/{id}
+  }
+
+  updateName(newName) {
+    this.props.ws.send(JSON.stringify(
+        {
+          method: method.PUT,
+          url: `/board/${this.props.boardUUID}`,
+          body: {
+            name: newName
+          }
+        }));
   }
 
   send(elements) {
@@ -70,7 +88,7 @@ class Board extends React.Component {
     this.props.ws.send(JSON.stringify(
         {
           method: method.GET,
-          url: `/board/${uuid}/elements`
+          url: `/board/${uuid}`
         }
     ));
   }
