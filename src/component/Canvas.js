@@ -73,7 +73,6 @@ function init(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, BAO);
   gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
-  console.log(programInfo.attribLocations.vertexPosition);
   programInfo.mainBAO = BAO;
   return programInfo;
 }
@@ -83,8 +82,6 @@ function drawLine(gl, params, BAO) {
   gl.bufferData(gl.ARRAY_BUFFER,
       new Float32Array(params),
       gl.STATIC_DRAW);
-  console.log("DRAWLINE");
-  console.log(params);
   gl.drawArrays(gl.LINE_STRIP, 0, params.length / 2);
 }
 
@@ -115,11 +112,8 @@ class Canvas extends React.Component {
   draw(elements) {
     let gl = this.gl;
     gl.useProgram(this.programInfo.program);
-    console.log("PROJ");
-    console.log(this.projM);
     gl.uniformMatrix4fv(this.programInfo.uniformLocations.projectionMatrix, false, this.projM);
     for (let shape of elements) {
-      console.log(shape);
       switch (shape.type) {
         case TOOL.LINE:
           drawLine(this.gl, shape.params, this.programInfo.mainBAO);
@@ -139,8 +133,6 @@ class Canvas extends React.Component {
     gl.viewport(0, 0, canvas.width, canvas.height);
     this.projM = mat4.create();
     mat4.ortho(this.projM, 0, canvas.width, canvas.height, 0, -1, 1);
-    console.log("RESIZED");
-    this.props.onResize();
   }
 
   render() {

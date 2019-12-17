@@ -24,6 +24,8 @@ class AccountEditor extends React.Component {
 
   componentDidMount() {
     this.refreshUser();
+    this.inputPassword.current.value='';
+    this.inputEmail.current.value='';
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -136,8 +138,9 @@ class AccountEditor extends React.Component {
                            className="van-input mb1"
                            rref={this.inputPassword}
                            onEnter={document.get}
-                           minLength={3}
-                           maxLength={4096}
+                           maxLength={255}
+                           pattern='^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{4,255}$'
+                           title={t["password.constraints"]}
                            style={{marginBottom: m}}/>
 
                 <input ref={this.refSubmit} type="submit" className="clear-ib btn green-btn"

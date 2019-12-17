@@ -57,14 +57,12 @@ class BoardManagerWidget extends React.Component {
   }
 
   renderContent() {
-    let resp;
     if (this.state.activeTab === 1) {
       // 1
     }
     if (this.state.activeTab === 2) {
       // 2
     }
-    // return resp.snapshots.map(b => <BoardCover id={b.id} name={b.name} img={b.img}/>);
     return (
         <div className="content-scroller">
           <div className="board-browser-content">
@@ -73,7 +71,7 @@ class BoardManagerWidget extends React.Component {
                                                             img={null}
                                                             onDelete={() => this.deleteBoard(s.board)}
                                                             onClick={() => this.props.onOpen(s)}
-                                                            key={i}/>)}
+                                                            key={s.board.uuid}/>)}
           </div>
         </div>
     );

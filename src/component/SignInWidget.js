@@ -64,20 +64,22 @@ class SignInWidget extends React.Component {
                        placeholder={t["your.email"]}
                        className="van-input mb1"
                        rref={this.refEmail}
-                       minLength={3}
                        maxLength={255}
                        onEnter={() => this.refSubmit.current.click()}
+                       autoComplete="on"
                        required/>
             <TextInput type="password"
                        placeholder={t["enter.password"]}
                        className="van-input mb1"
                        rref={this.refPassword}
                        onEnter={document.get}
-                       minLength={3}
-                       maxLength={4096}
+                       maxLength={255}
+                       pattern='^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{4,255}$'
+                       title={t["password.constraints"]}
+                       autoComplete="on"
                        required/>
             <div className="hr-section">
-              <a href="/restore-password">
+              <a href="#">
                 <b>{t["forgot.password?"]}</b>
               </a>
               <input ref={this.refSubmit} type="submit" className="clear-ib btn green-btn"

@@ -31,7 +31,6 @@ class Chat extends React.Component {
         this.setState({messages: this.state.messages.concat(json.messages)});
         break;
     }
-    console.log(event.data);
   }
 
   readChatHistory() {
@@ -76,9 +75,6 @@ class Chat extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("chat did update");
-    console.log(prevProps);
-    console.log(this.props);
     if (!prevProps.chatUUID && this.props.chatUUID) {
       console.log("chat got valid ws");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));

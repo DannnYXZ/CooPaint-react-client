@@ -13,7 +13,6 @@ class TextInput extends React.Component {
         <input ref={this.props.rref}
                {...this.props}
                className={this.props.className || "van-input"}
-               autoComplete="on"
                onKeyUp={this.handleKeyUp.bind(this)}
                onClick={(e) => e.stopPropagation()}
                onChange={this.props.onChange}

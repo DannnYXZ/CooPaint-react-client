@@ -40,7 +40,9 @@ class Editor extends React.Component {
         link: "",
         chat: {},
         board: {}
-      }
+      },
+      ws: null,
+      boardMode: BOARD_MODE.OFFLINE
     };
     this.refBoardInput = React.createRef();
     this.refChat = React.createRef();
@@ -49,34 +51,37 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    this.checkBoardMode();
-  }
-
-  componentWillUnmount() {
-    console.log("EDITOR UNMOUNTED");
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevProps.ws && this.props.ws) {
-      console.log("YEP, IT is");
-      this.props.ws.addEventListener("message", this.onMessage.bind(this));
-      this.checkBoardMode();
-    }
-    if (prevProps.match.params !== this.props.match.params && this.props.ws) {
-      this.checkBoardMode();
-    }
-  }
-
-  checkBoardMode() {
-    console.log("checking board state");
-    console.log(this.props.match.params);
     let snapshotLink = this.props.match.params.snapshot;
     if (snapshotLink) {
-      this.setState({boardMode: BOARD_MODE.ONLINE});
-      this.getSnapshot(snapshotLink);
+      let ws = new WebSocket(`ws://${window.location.host}/coopaint/ws`);
+      ws.addEventListener("message", this.onMessage.bind(this));
+      ws.onopen = () => {
+        this.setState({boardMode: BOARD_MODE.ONLINE, ws: ws});
+        this.getSnapshot(snapshotLink);
+      };
     } else {
       this.setState({boardMode: BOARD_MODE.OFFLINE});
     }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.match.params.snapshot !== prevProps.match.params.snapshot) {
+      let snapshotLink = this.props.match.params.snapshot;
+      if (snapshotLink && this.state.boardMode === BOARD_MODE.OFFLINE) {
+        let ws = new WebSocket(`ws://${window.location.host}/coopaint/ws`);
+        ws.addEventListener("message", this.onMessage.bind(this));
+        ws.onopen = () => {
+          this.setState({boardMode: BOARD_MODE.ONLINE, ws: ws});
+          this.getSnapshot(snapshotLink);
+        };
+      } else {
+        this.getSnapshot(snapshotLink);
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.state.ws) this.state.ws.close();
   }
 
   onOpenBoard(snapshot) {
@@ -94,6 +99,7 @@ class Editor extends React.Component {
             // this.setState({boardMode: }); previous
             break;
           case BOARD_MODE.ONLINE:
+            console.log(this);
             this.refBoard.current.readBoard(snapshot.board.uuid);
             console.log("INSTALLED SNAPSHOT");
             this.setState({snapshot});
@@ -113,10 +119,6 @@ class Editor extends React.Component {
     this.setState({isJoinBoardWidgetOpened: false});
   }
 
-  onSave() {
-
-  }
-
   onDelete() {
 
   }
@@ -131,20 +133,23 @@ class Editor extends React.Component {
   }
 
   onInvite() {
-    this.setState({boardMode: BOARD_MODE.INVITE});
-    this.getSnapshot("");
+    if (!this.state.snapshot.link) {
+      let ws = new WebSocket(`ws://${window.location.host}/coopaint/ws`);
+      ws.addEventListener("message", this.onMessage.bind(this));
+      ws.onopen = () => {
+        this.setState({boardMode: BOARD_MODE.INVITE, ws: ws});
+        this.getSnapshot("");
+      };
+    }
   }
-
 
   onManage() {
     this.setState({isParticipantsManagerOpened: true});
   }
 
   getSnapshot(url) {
-    // if empty -> creates
-    console.log("editor connects to" + url);
     try {
-      this.props.ws.send(JSON.stringify(
+      this.state.ws.send(JSON.stringify(
           {
             method: method.GET,
             url: `/snapshot/${url}`
@@ -194,10 +199,10 @@ class Editor extends React.Component {
                        onLoseFocus={this.updateBoardName.bind(this)}/>
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
-              <Button className="btn trans-btn" onClick={this.onSave.bind(this)}>{t["save.board"]}</Button>
+              <Button className="btn trans-btn" onClick={this.onInvite.bind(this)}>{t["save.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>{t["create.new.board"]}</Button>
-              <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>
+              {/*<Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>*/}
             </Drop>
           </Button>
           <Button className="btn green-btn"
@@ -253,14 +258,14 @@ class Editor extends React.Component {
                 {[<Chat ref={this.refChat}
                         user={this.props.user}
                         chatUUID={this.state.snapshot.chat.uuid}
-                        ws={this.props.ws}/>]}
+                        ws={this.state.ws}/>]}
               </Drop>
             </Button>
           </div>
           <Board user={this.props.user}
                  ref={this.refBoard}
                  mode={this.state.boardMode}
-                 ws={this.props.ws}
+                 ws={this.state.ws}
                  boardUUID={this.state.snapshot.board.uuid}
                  acceptedBoard={this.acceptedBoard.bind(this)}
           />
@@ -270,5 +275,3 @@ class Editor extends React.Component {
 }
 
 export default withRouter(Editor);
-
-// TODO: routing

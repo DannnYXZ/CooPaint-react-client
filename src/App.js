@@ -53,30 +53,6 @@ class App extends React.Component {
     this.loadLangPack(user.lang);
   }
 
-  onJoin(boardName) {
-    this.setState({isJoinBoardWidgetOpened: false});
-  }
-
-  onSave() {
-
-  }
-
-  onDelete() {
-
-  }
-
-  onOpen() {
-    this.setState({isBoardBrowserOpened: true});
-  }
-
-  onCreate() {
-    request(method.POST, "/save-board", {})
-  }
-
-  onManage() {
-    this.setState({isParticipantsManagerOpened: true});
-  }
-
   renderLangSwitcher() {
     return (
         <LangSwitcher isOpened={this.state.isLangSelectorOpened}
