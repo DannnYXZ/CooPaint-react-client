@@ -1,6 +1,11 @@
 .participants {
     display: flex;
     flex-direction: column;
+    min-width: 300px;
+}
+
+.participants > * {
+    margin-bottom: 10px;
 }
 
 .participant-info {

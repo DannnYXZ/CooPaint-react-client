@@ -33,12 +33,13 @@ class Chat extends React.Component {
     }
   }
 
-  readChatHistory() {
+  readChatHistory(uuid) {
+    this.state.messages=[];
     try {
       this.props.ws.send(JSON.stringify(
           {
             method: method.GET,
-            url: `/chat/${this.props.chatUUID}/messages`
+            url: `/chat/${uuid}/messages`
           }
       ));
     } catch (e) {
@@ -78,7 +79,6 @@ class Chat extends React.Component {
     if (!prevProps.chatUUID && this.props.chatUUID) {
       console.log("chat got valid ws");
       this.props.ws.addEventListener("message", this.onMessage.bind(this));
-      this.readChatHistory();
     }
     this.scrollToBottom();
     this.inputRef.current.focus();
@@ -120,6 +120,7 @@ class Chat extends React.Component {
           <div className="msger-inputarea">
             <TextInput rref={this.inputRef} className="msger-input" placeholder={t["enter.your.message"]}
                        onEnter={this.sendMessages.bind(this)}
+                       maxLength={4096}
                        style={{height: 40}}/>
             <Button className="msger-send-btn" style={{display: "inline-block"}}
                     onClick={this.sendMessages.bind(this)}>{t["send"]}</Button>

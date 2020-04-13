@@ -31,7 +31,7 @@ class Editor extends React.Component {
       isAccountButtonOpened: false,
       isMainMenuOpened: false,
       isBoardBrowserOpened: false,
-      isParticipantsManagerOpened: false,
+      isParticipantsManagerOpened: true,
       isChatOpened: false,
       board: {
         name: 'Unnamed Board'
@@ -101,6 +101,7 @@ class Editor extends React.Component {
           case BOARD_MODE.ONLINE:
             console.log(this);
             this.refBoard.current.readBoard(snapshot.board.uuid);
+            this.refChat.current.readChatHistory(snapshot.chat.uuid);
             console.log("INSTALLED SNAPSHOT");
             this.setState({snapshot});
             break;
@@ -196,13 +197,14 @@ class Editor extends React.Component {
             <TextInput rref={this.refBoardInput}
                        placeholder={this.state.board.name}
                        className="trans-input"
+                       maxLength={32}
                        onLoseFocus={this.updateBoardName.bind(this)}/>
             <img src="dropdown.svg"/>
             <Drop isOpened={this.state.isMainMenuOpened} style={{top: 50, left: 0}}>
               <Button className="btn trans-btn" onClick={this.onInvite.bind(this)}>{t["save.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onOpen.bind(this)}>{t["open.saved.board"]}</Button>
               <Button className="btn trans-btn" onClick={this.onCreate.bind(this)}>{t["create.new.board"]}</Button>
-              {/*<Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>*/}
+              <Button className="btn trans-btn" onClick={this.onManage.bind(this)}>{t["manage.participants"]}</Button>
             </Drop>
           </Button>
           <Button className="btn green-btn"
@@ -236,6 +238,8 @@ class Editor extends React.Component {
                             this.setState({isSignUpWidgetOpened: false, isAccountButtonOpened: false})
                           }}/>
             <ParticipantsManagerWidget isOpened={this.state.isParticipantsManagerOpened}
+                                       boardUUID={this.state.snapshot.board.uuid}
+                                       chatUUID={this.state.snapshot.chat.uuid}
                                        onClose={() => this.setState({isParticipantsManagerOpened: false})}/>
             <BoardManagerWidget isOpened={this.state.isBoardBrowserOpened}
                                 onOpen={(snapshot) => {
